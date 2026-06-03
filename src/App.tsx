@@ -95,6 +95,7 @@ export default function App() {
   const [tourType, setTourType] = useState<'classic' | 'school'>('classic');
   const [groupSize, setGroupSize] = useState<number>(10);
   const [gewandZuschlag, setGewandZuschlag] = useState<boolean>(true);
+  const [activeFormStep, setActiveFormStep] = useState<1 | 2 | 3>(1);
   
   // Contact details state
   const [formData, setFormData] = useState({
@@ -1033,232 +1034,322 @@ export default function App() {
                 </div>
               ) : (
                 <form onSubmit={handleBookingSubmit}>
+                  {/* Step Indicators on Mobile */}
+                  <div className="mobile-step-indicator">
+                    <div className={`step-dot ${activeFormStep >= 1 ? 'active' : ''}`} onClick={() => setActiveFormStep(1)}>1</div>
+                    <div className="step-line" />
+                    <div className={`step-dot ${activeFormStep >= 2 ? 'active' : ''}`} onClick={() => { if (selectedDate) setActiveFormStep(2); }}>2</div>
+                    <div className="step-line" />
+                    <div className={`step-dot ${activeFormStep >= 3 ? 'active' : ''}`} onClick={() => { if (selectedDate && formData.name && formData.email) setActiveFormStep(3); }}>3</div>
+                  </div>
+
                   <div className="booking-grid-wrapper">
-                    {/* Left Grid Column: Date selection & Tour options */}
-                    <div className="booking-grid-column">
-                      {/* Step 1: Select Date */}
-                      <div className="booking-step-title">
-                        <span>1</span> Wunschtermin wählen
+                    {/* Step 1: Wunschtermin & Konfiguration */}
+                    <div className={`booking-step-panel ${activeFormStep === 1 ? 'is-active' : ''}`}>
+                      <div className="booking-step-header" onClick={() => { if (window.innerWidth < 992) setActiveFormStep(1); }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <span>1</span> Wunschtermin &amp; Optionen wählen
+                        </div>
+                        <ChevronRight className="accordion-chevron" size={18} />
                       </div>
                       
-                      <div className="calendar-widget">
-                        <div className="calendar-header">
-                          <button type="button" className="calendar-nav-btn" onClick={() => handleMonthChange('prev')}>
-                            <ChevronLeft size={18} />
-                          </button>
-                          <span className="calendar-month-title">
-                            {currentCalendarMonth.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}
-                          </span>
-                          <button type="button" className="calendar-nav-btn" onClick={() => handleMonthChange('next')}>
-                            <ChevronRight size={18} />
-                          </button>
+                      <div className="booking-step-body">
+                        <div className="calendar-widget">
+                          <div className="calendar-header">
+                            <button type="button" className="calendar-nav-btn" onClick={() => handleMonthChange('prev')}>
+                              <ChevronLeft size={18} />
+                            </button>
+                            <span className="calendar-month-title">
+                              {currentCalendarMonth.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}
+                            </span>
+                            <button type="button" className="calendar-nav-btn" onClick={() => handleMonthChange('next')}>
+                              <ChevronRight size={18} />
+                            </button>
+                          </div>
+
+                          <div className="calendar-grid">
+                            {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map(d => (
+                              <div key={d} className="calendar-weekday">{d}</div>
+                            ))}
+                            {generateCalendarDays().map((dayObj, index) => {
+                              const isSel = dayObj.dayNumber ? isDaySelected(dayObj.dayNumber) : false;
+                              const isDis = dayObj.dayNumber ? isDayDisabled(dayObj.dayNumber) : true;
+                              
+                              return (
+                                <div 
+                                  key={index} 
+                                  className={`calendar-day ${dayObj.dayNumber === null ? 'empty' : ''} ${isSel ? 'selected' : ''} ${isDis && dayObj.dayNumber !== null ? 'disabled' : ''}`}
+                                  onClick={() => handleDayClick(dayObj.dayNumber)}
+                                >
+                                  {dayObj.dayNumber}
+                                </div>
+                              );
+                            })}
+                          </div>
+                          {selectedDate && (
+                            <div className="status-alert info" style={{ marginTop: '16px', fontSize: '0.85rem' }}>
+                              <CalendarIcon size={16} /> Ausgewählter Termin: <strong>
+                                {selectedDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                              </strong>
+                            </div>
+                          )}
                         </div>
 
-                        <div className="calendar-grid">
-                          {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map(d => (
-                            <div key={d} className="calendar-weekday">{d}</div>
-                          ))}
-                          {generateCalendarDays().map((dayObj, index) => {
-                            const isSel = dayObj.dayNumber ? isDaySelected(dayObj.dayNumber) : false;
-                            const isDis = dayObj.dayNumber ? isDayDisabled(dayObj.dayNumber) : true;
-                            
-                            return (
-                              <div 
-                                key={index} 
-                                className={`calendar-day ${dayObj.dayNumber === null ? 'empty' : ''} ${isSel ? 'selected' : ''} ${isDis && dayObj.dayNumber !== null ? 'disabled' : ''}`}
-                                onClick={() => handleDayClick(dayObj.dayNumber)}
-                              >
-                                {dayObj.dayNumber}
-                              </div>
-                            );
-                          })}
+                        {/* Step 2 Inside Step 1 panel: Options */}
+                        <div className="booking-step-title" style={{ marginTop: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          Führung konfigurieren
                         </div>
-                        {selectedDate && (
-                          <div className="status-alert info" style={{ marginTop: '16px', fontSize: '0.85rem' }}>
-                            <CalendarIcon size={16} /> Ausgewählter Termin: <strong>
-                              {selectedDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                            </strong>
+
+                        <div className="booking-options">
+                          <div 
+                            className={`booking-option-card ${tourType === 'classic' ? 'selected' : ''}`}
+                            onClick={() => setTourType('classic')}
+                          >
+                            <h5>Standard-Führung</h5>
+                            <p>Für Vereine, Firmen &amp; Privatgruppen bis 20 Pers. Base: 120€</p>
+                          </div>
+                          <div 
+                            className={`booking-option-card ${tourType === 'school' ? 'selected' : ''}`}
+                            onClick={() => setTourType('school')}
+                          >
+                            <h5>Schulklasse / Jugend</h5>
+                            <p>Flache Pauschale für Schulklassen &amp; Kinder. Flat: 70€</p>
+                          </div>
+                        </div>
+
+                        {tourType === 'classic' && (
+                          <div className="form-group" style={{ marginBottom: '20px' }}>
+                            <label htmlFor="groupSizeRange">Teilnehmeranzahl: {groupSize} Personen</label>
+                            <input 
+                              id="groupSizeRange"
+                              type="range" 
+                              min="1" 
+                              max="40" 
+                              value={groupSize} 
+                              onChange={(e) => setGroupSize(parseInt(e.target.value))}
+                              style={{ width: '100%', accentColor: 'var(--accent)' }}
+                            />
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                              * Bis 20 Personen 120€ pauschal. Jede weitere Person zusätzlich +5€
+                            </span>
                           </div>
                         )}
-                      </div>
 
-                      {/* Step 2: Configure Group & Options */}
-                      <div className="booking-step-title" style={{ marginTop: '24px' }}>
-                        <span>2</span> Führung konfigurieren
-                      </div>
-
-                      <div className="booking-options">
-                        <div 
-                          className={`booking-option-card ${tourType === 'classic' ? 'selected' : ''}`}
-                          onClick={() => setTourType('classic')}
-                        >
-                          <h5>Standard-Führung</h5>
-                          <p>Für Vereine, Firmen & Privatgruppen bis 20 Pers. Base: 120€</p>
-                        </div>
-                        <div 
-                          className={`booking-option-card ${tourType === 'school' ? 'selected' : ''}`}
-                          onClick={() => setTourType('school')}
-                        >
-                          <h5>Schulklasse / Jugend</h5>
-                          <p>Flache Pauschale für Schulklassen & Kinder. Flat: 70€</p>
-                        </div>
-                      </div>
-
-                      {tourType === 'classic' && (
-                        <div className="form-group" style={{ marginBottom: '20px' }}>
-                          <label htmlFor="groupSizeRange">Teilnehmeranzahl: {groupSize} Personen</label>
+                        <label className="form-control-check" style={{ marginBottom: '0px' }}>
                           <input 
-                            id="groupSizeRange"
-                            type="range" 
-                            min="1" 
-                            max="40" 
-                            value={groupSize} 
-                            onChange={(e) => setGroupSize(parseInt(e.target.value))}
-                            style={{ width: '100%', accentColor: 'var(--accent)' }}
+                            type="checkbox" 
+                            checked={gewandZuschlag} 
+                            onChange={(e) => setGewandZuschlag(e.target.checked)} 
                           />
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                            * Bis 20 Personen 120€ pauschal. Jede weitere Person zusätzlich +5€
-                          </span>
-                        </div>
-                      )}
+                          <span>Nachtwächter im historischen Gewand (+10,00 €)</span>
+                        </label>
 
-                      <label className="form-control-check" style={{ marginBottom: '0px' }}>
-                        <input 
-                          type="checkbox" 
-                          checked={gewandZuschlag} 
-                          onChange={(e) => setGewandZuschlag(e.target.checked)} 
-                        />
-                        <span>Nachtwächter im historischen Gewand (+10,00 €)</span>
-                      </label>
+                        {/* Next Navigation for Mobile only */}
+                        <div className="mobile-step-nav">
+                          <button 
+                            type="button" 
+                            className="btn-medieval-cta" 
+                            style={{ width: '100%' }}
+                            onClick={() => {
+                              if (!selectedDate) {
+                                setErrorMessage("Bitte wählen Sie zuerst einen Wunschtermin im Kalender aus.");
+                              } else {
+                                setErrorMessage("");
+                                setActiveFormStep(2);
+                              }
+                            }}
+                          >
+                            Weiter zu Kontaktdaten <ArrowRight size={16} />
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Right Grid Column: Contact details & Submission */}
-                    <div className="booking-grid-column">
-                      {/* Step 3: Contact details */}
-                      <div className="booking-step-title">
-                        <span>3</span> Kontaktdaten eintragen
-                      </div>
-
-                      <div className="booking-form-grid">
-                        <div className="form-group">
-                          <label htmlFor="inputName">Name *</label>
-                          <div style={{ position: 'relative' }}>
-                            <User size={16} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--text-muted)' }} />
-                            <input 
-                              id="inputName"
-                              type="text" 
-                              required 
-                              className="form-control" 
-                              style={{ paddingLeft: '40px', width: '100%' }}
-                              placeholder="Max Mustermann"
-                              value={formData.name}
-                              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            />
+                    {/* Right column container for desktop grid layout */}
+                    <div className="booking-grid-right-col">
+                      {/* Step 2: Contact details */}
+                      <div className={`booking-step-panel ${activeFormStep === 2 ? 'is-active' : ''}`}>
+                        <div className="booking-step-header" onClick={() => { if (window.innerWidth < 992 && selectedDate) setActiveFormStep(2); }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <span>2</span> Kontaktdaten eintragen
                           </div>
+                          <ChevronRight className="accordion-chevron" size={18} />
                         </div>
+                        
+                        <div className="booking-step-body">
+                          <div className="booking-form-grid">
+                            <div className="form-group">
+                              <label htmlFor="inputName">Name *</label>
+                              <div style={{ position: 'relative' }}>
+                                <User size={16} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--text-muted)' }} />
+                                <input 
+                                  id="inputName"
+                                  type="text" 
+                                  required 
+                                  className="form-control" 
+                                  style={{ paddingLeft: '40px', width: '100%' }}
+                                  placeholder="Max Mustermann"
+                                  value={formData.name}
+                                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                />
+                              </div>
+                            </div>
 
-                        <div className="form-group">
-                          <label htmlFor="inputEmail">E-Mail *</label>
-                          <div style={{ position: 'relative' }}>
-                            <Mail size={16} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--text-muted)' }} />
-                            <input 
-                              id="inputEmail"
-                              type="email" 
-                              required 
-                              className="form-control" 
-                              style={{ paddingLeft: '40px', width: '100%' }}
-                              placeholder="email@beispiel.de"
-                              value={formData.email}
-                              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            />
+                            <div className="form-group">
+                              <label htmlFor="inputEmail">E-Mail *</label>
+                              <div style={{ position: 'relative' }}>
+                                <Mail size={16} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--text-muted)' }} />
+                                <input 
+                                  id="inputEmail"
+                                  type="email" 
+                                  required 
+                                  className="form-control" 
+                                  style={{ paddingLeft: '40px', width: '100%' }}
+                                  placeholder="email@beispiel.de"
+                                  value={formData.email}
+                                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="form-group booking-form-full">
+                              <label htmlFor="inputPhone">Telefonnummer</label>
+                              <div style={{ position: 'relative' }}>
+                                <Phone size={16} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--text-muted)' }} />
+                                <input 
+                                  id="inputPhone"
+                                  type="tel" 
+                                  className="form-control" 
+                                  style={{ paddingLeft: '40px', width: '100%' }}
+                                  placeholder="+49 170 1234567"
+                                  value={formData.phone}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (/^[0-9+\s()/-]*$/.test(val)) {
+                                      setFormData({ ...formData, phone: val });
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="form-group booking-form-full">
+                              <label htmlFor="inputMessage">Ergänzungen / Nachricht</label>
+                              <textarea 
+                                id="inputMessage"
+                                className="form-control" 
+                                style={{ minHeight: '80px' }}
+                                placeholder="Zusätzliche Wünsche, Anmerkungen oder Fragen..."
+                                value={formData.message}
+                                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                              />
+                            </div>
                           </div>
-                        </div>
 
-                        <div className="form-group booking-form-full">
-                          <label htmlFor="inputPhone">Telefonnummer</label>
-                          <div style={{ position: 'relative' }}>
-                            <Phone size={16} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--text-muted)' }} />
-                            <input 
-                              id="inputPhone"
-                              type="tel" 
-                              className="form-control" 
-                              style={{ paddingLeft: '40px', width: '100%' }}
-                              placeholder="+49 170 1234567"
-                              value={formData.phone}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                if (/^[0-9+\s()/-]*$/.test(val)) {
-                                  setFormData({ ...formData, phone: val });
+                          {/* Navigation buttons for Mobile only */}
+                          <div className="mobile-step-nav" style={{ display: 'flex', gap: '12px' }}>
+                            <button 
+                              type="button" 
+                              className="btn btn-secondary" 
+                              style={{ width: '40%' }}
+                              onClick={() => setActiveFormStep(1)}
+                            >
+                              Zurück
+                            </button>
+                            <button 
+                              type="button" 
+                              className="btn-medieval-cta" 
+                              style={{ width: '60%' }}
+                              onClick={() => {
+                                if (!formData.name || !formData.email) {
+                                  setErrorMessage("Bitte tragen Sie Ihren Namen und Ihre E-Mail-Adresse ein.");
+                                } else {
+                                  setErrorMessage("");
+                                  setActiveFormStep(3);
                                 }
                               }}
-                            />
+                            >
+                              Weiter <ArrowRight size={16} />
+                            </button>
                           </div>
                         </div>
-
-                        <div className="form-group booking-form-full">
-                          <label htmlFor="inputMessage">Ergänzungen / Nachricht</label>
-                          <textarea 
-                            id="inputMessage"
-                            className="form-control" 
-                            style={{ minHeight: '80px' }}
-                            placeholder="Zusätzliche Wünsche, Anmerkungen oder Fragen..."
-                            value={formData.message}
-                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                          />
-                        </div>
                       </div>
 
-                      {/* Summary Box */}
-                      <div className="booking-summary-box" style={{ margin: '15px 0' }}>
-                        <h4 style={{ fontFamily: 'var(--font-sans)', fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '10px' }}>
-                          Zusammenfassung der Anfrage:
-                        </h4>
-                        <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
-                          <span>Termin:</span>
-                          <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>
-                            {selectedDate ? selectedDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Kein Termin ausgewählt'}
-                          </span>
-                        </div>
-                        <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
-                          <span>Führungstyp:</span>
-                          <span>{tourType === 'classic' ? 'Standard-Führung' : 'Schulklasse / Jugend'}</span>
-                        </div>
-                        {tourType === 'classic' && (
-                          <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
-                            <span>Teilnehmer:</span>
-                            <span>{groupSize} Personen</span>
+                      {/* Step 3: Zusammenfassung & Senden */}
+                      <div className={`booking-step-panel ${activeFormStep === 3 ? 'is-active' : ''}`}>
+                        <div className="booking-step-header" onClick={() => { if (window.innerWidth < 992 && selectedDate && formData.name && formData.email) setActiveFormStep(3); }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <span>3</span> Zusammenfassung &amp; Senden
                           </div>
-                        )}
-                        <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
-                          <span>Im Gewand:</span>
-                          <span>{gewandZuschlag ? 'Ja (+10€)' : 'Nein'}</span>
+                          <ChevronRight className="accordion-chevron" size={18} />
                         </div>
-                        <div className="booking-summary-row total" style={{ paddingTop: '8px', marginTop: '8px' }}>
-                          <span>Voraussichtlicher Preis:</span>
-                          <span className="booking-summary-total-val">{calculateTotalCost()},00 €</span>
+                        
+                        <div className="booking-step-body">
+                          {/* Summary Box */}
+                          <div className="booking-summary-box" style={{ margin: '0 0 15px 0' }}>
+                            <h4 style={{ fontFamily: 'var(--font-sans)', fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '10px' }}>
+                              Zusammenfassung der Anfrage:
+                            </h4>
+                            <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
+                              <span>Termin:</span>
+                              <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>
+                                {selectedDate ? selectedDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Kein Termin ausgewählt'}
+                              </span>
+                            </div>
+                            <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
+                              <span>Führungstyp:</span>
+                              <span>{tourType === 'classic' ? 'Standard-Führung' : 'Schulklasse / Jugend'}</span>
+                            </div>
+                            {tourType === 'classic' && (
+                              <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
+                                <span>Teilnehmer:</span>
+                                <span>{groupSize} Personen</span>
+                              </div>
+                            )}
+                            <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
+                              <span>Im Gewand:</span>
+                              <span>{gewandZuschlag ? 'Ja (+10€)' : 'Nein'}</span>
+                            </div>
+                            <div className="booking-summary-row total" style={{ paddingTop: '8px', marginTop: '8px' }}>
+                              <span>Voraussichtlicher Preis:</span>
+                              <span className="booking-summary-total-val">{calculateTotalCost()},00 €</span>
+                            </div>
+                          </div>
+
+                          {/* Turnstile Antispam */}
+                          <div className="cf-turnstile-wrapper" style={{ margin: '10px 0' }}>
+                            <div ref={turnstileRef}></div>
+                          </div>
+
+                          {errorMessage && (
+                            <div className="status-alert error" style={{ marginBottom: '16px', marginTop: '0px' }}>
+                              <ShieldAlert size={18} /> {errorMessage}
+                            </div>
+                          )}
+
+                          <button 
+                            type="submit" 
+                            className="btn-medieval-cta" 
+                            style={{ width: '100%', height: '52px', marginTop: '10px' }}
+                            disabled={isSubmitting || !turnstileToken}
+                          >
+                            <Flame size={16} className="glow-glow" />
+                            {isSubmitting ? "Wird gesendet..." : "Führung unverbindlich anfragen"}
+                          </button>
+
+                          {/* Mobile Back Button */}
+                          <div className="mobile-step-nav">
+                            <button 
+                              type="button" 
+                              className="btn btn-secondary" 
+                              style={{ width: '100%', marginTop: '16px' }}
+                              onClick={() => setActiveFormStep(2)}
+                            >
+                              Zurück zu den Kontaktdaten
+                            </button>
+                          </div>
                         </div>
                       </div>
-
-                      {/* Turnstile Antispam */}
-                      <div className="cf-turnstile-wrapper" style={{ margin: '10px 0' }}>
-                        <div ref={turnstileRef}></div>
-                      </div>
-
-                      {errorMessage && (
-                        <div className="status-alert error" style={{ marginBottom: '16px', marginTop: '0px' }}>
-                          <ShieldAlert size={18} /> {errorMessage}
-                        </div>
-                      )}
-
-                      <button 
-                        type="submit" 
-                        className="btn-medieval-cta" 
-                        style={{ width: '100%', height: '52px', marginTop: '10px' }}
-                        disabled={isSubmitting || !turnstileToken}
-                      >
-                        <Flame size={16} className="glow-glow" />
-                        {isSubmitting ? "Wird gesendet..." : "Führung unverbindlich anfragen"}
-                      </button>
                     </div>
                   </div>
                 </form>
