@@ -373,32 +373,62 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ zIndex: 90, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+            style={{ zIndex: 110, display: 'flex', justifyContent: 'flex-end', alignItems: 'stretch' }}
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <motion.div 
-              className="widget-card"
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              style={{ width: '85%', maxWidth: '380px', flexDirection: 'column', gap: '30px', padding: '40px', background: 'var(--bg-dark)' }}
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween', ease: [0.22, 1, 0.36, 1], duration: 0.5 }}
+              style={{ 
+                width: '80%', 
+                maxWidth: '320px', 
+                background: 'rgba(13, 17, 26, 0.95)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
+                borderLeft: '1px solid rgba(217, 162, 74, 0.2)',
+                padding: '40px 30px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '40px',
+                boxShadow: '-10px 0 40px rgba(0,0,0,0.5)',
+                position: 'relative'
+              }}
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 style={{ fontSize: '1.8rem', color: 'var(--accent)' }}>Navigation</h3>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'center', width: '100%' }}>
-                <li><a href="#erlebnis" className="nav-link" style={{ fontSize: '1.1rem' }} onClick={(e) => { e.preventDefault(); scrollToSection('erlebnis'); }}>Erlebnis</a></li>
-                <li><a href="#nachtwaechter" className="nav-link" style={{ fontSize: '1.1rem' }} onClick={(e) => { e.preventDefault(); scrollToSection('nachtwaechter'); }}>Der Nachtwächter</a></li>
-                <li><a href="#erwartungen" className="nav-link" style={{ fontSize: '1.1rem' }} onClick={(e) => { e.preventDefault(); scrollToSection('erwartungen'); }}>Was dich erwartet</a></li>
-                <li><a href="#eignung" className="nav-link" style={{ fontSize: '1.1rem' }} onClick={(e) => { e.preventDefault(); scrollToSection('eignung'); }}>Für wen?</a></li>
-                <li><a href="#galerie" className="nav-link" style={{ fontSize: '1.1rem' }} onClick={(e) => { e.preventDefault(); scrollToSection('galerie'); }}>Galerie</a></li>
-                <li><a href="#preise" className="nav-link" style={{ fontSize: '1.1rem' }} onClick={(e) => { e.preventDefault(); scrollToSection('preise'); }}>Dauer & Preise</a></li>
-                <li style={{ marginTop: '10px' }}>
-                  <button className="btn-medieval-cta" style={{ width: '100%' }} onClick={() => scrollToSection('buchung')}>
-                    <Flame size={16} className="glow-glow" />
-                    Führung anfragen
-                  </button>
-                </li>
-              </ul>
+              {/* Close Button inside Drawer */}
+              <button 
+                onClick={() => setIsMobileMenuOpen(false)}
+                style={{ 
+                  alignSelf: 'flex-end', 
+                  background: 'none', 
+                  border: 'none', 
+                  color: 'var(--text-muted)', 
+                  cursor: 'pointer',
+                  padding: '5px'
+                }}
+              >
+                <X size={24} />
+              </button>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+                <h3 className="font-gothic" style={{ fontSize: '2rem', color: 'var(--accent)', margin: 0 }}>Navigation</h3>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '24px', padding: 0 }}>
+                  <li><a href="#erlebnis" className="nav-link" style={{ fontSize: '1.05rem', display: 'block' }} onClick={(e) => { e.preventDefault(); scrollToSection('erlebnis'); }}>Erlebnis</a></li>
+                  <li><a href="#nachtwaechter" className="nav-link" style={{ fontSize: '1.05rem', display: 'block' }} onClick={(e) => { e.preventDefault(); scrollToSection('nachtwaechter'); }}>Der Nachtwächter</a></li>
+                  <li><a href="#erwartungen" className="nav-link" style={{ fontSize: '1.05rem', display: 'block' }} onClick={(e) => { e.preventDefault(); scrollToSection('erwartungen'); }}>Was dich erwartet</a></li>
+                  <li><a href="#eignung" className="nav-link" style={{ fontSize: '1.05rem', display: 'block' }} onClick={(e) => { e.preventDefault(); scrollToSection('eignung'); }}>Für wen?</a></li>
+                  <li><a href="#galerie" className="nav-link" style={{ fontSize: '1.05rem', display: 'block' }} onClick={(e) => { e.preventDefault(); scrollToSection('galerie'); }}>Galerie</a></li>
+                  <li><a href="#preise" className="nav-link" style={{ fontSize: '1.05rem', display: 'block' }} onClick={(e) => { e.preventDefault(); scrollToSection('preise'); }}>Dauer & Preise</a></li>
+                  <li style={{ marginTop: '20px' }}>
+                    <button className="btn-medieval-cta" style={{ width: '100%' }} onClick={() => scrollToSection('buchung')}>
+                      <Flame size={16} className="glow-glow" />
+                      Führung anfragen
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </motion.div>
           </motion.div>
         )}
