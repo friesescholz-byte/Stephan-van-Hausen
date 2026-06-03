@@ -1858,6 +1858,10 @@ section {
   display: none;
 }
 
+.booking-step-body-wrapper {
+  display: block; /* Default on desktop (always open) */
+}
+
 .booking-step-header {
   font-family: var(--font-sans);
   font-size: 1.1rem;
@@ -1880,6 +1884,14 @@ section {
   justify-content: center;
   font-size: 0.8rem;
   font-weight: bold;
+  transition: var(--transition-medium);
+}
+
+.booking-step-header span.completed {
+  background-color: rgba(217, 162, 74, 0.15);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 8px rgba(217, 162, 74, 0.2);
 }
 
 .accordion-chevron {
@@ -1921,12 +1933,25 @@ section {
     border-color: var(--accent);
     box-shadow: var(--shadow-gold);
   }
+
+  .step-dot.completed {
+    background-color: rgba(217, 162, 74, 0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 10px rgba(217, 162, 74, 0.2);
+  }
   
   .step-line {
     flex: 1;
     max-width: 60px;
     height: 2px;
     background-color: var(--border-color);
+    transition: var(--transition-medium);
+  }
+
+  .step-line.completed {
+    background-color: var(--accent);
+    box-shadow: 0 0 6px rgba(217, 162, 74, 0.4);
   }
   
   .booking-grid-right-col {
@@ -1969,14 +1994,22 @@ section {
     color: var(--accent);
   }
   
-  .booking-step-body {
-    display: none;
-    padding: 24px 20px;
-    border-top: 1px solid var(--border-color);
+  /* CSS-Grid Based Smooth Accordion Transitions */
+  .booking-step-body-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    overflow: hidden;
+  }
+
+  .booking-step-panel.is-active .booking-step-body-wrapper {
+    grid-template-rows: 1fr;
   }
   
-  .booking-step-panel.is-active .booking-step-body {
-    display: block;
+  .booking-step-body {
+    min-height: 0;
+    padding: 24px 20px;
+    border-top: 1px solid var(--border-color);
   }
   
   .mobile-step-nav {
