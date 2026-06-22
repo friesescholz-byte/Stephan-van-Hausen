@@ -68,13 +68,20 @@ const IMAGES = {
 
 // New Gallery Images from Cloudflare R2 website-datein storage folder
 const GALLERY_IMAGES = {
+  // Die 2 alten, die bleiben sollen:
   fuehrungNacht: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/1000_fuehrung_nachtwaechter_nienburg_20_.jpg",
   nachtwaechterGasse: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/3LPC2YQCTKNBB7ZRMCIAYE6IL6.avif",
-  likoer: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Mike_N_Lik%C3%B6r_2019.jpg",
-  stefanMike: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Mike_N_Stefan_2019_04.jpg",
-  weinhaus1: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Mike_N_Weinhaus_2019_01.jpg",
-  weinhaus2: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Mike_N_Weinhaus_2019_02.jpg",
-  gasseStimmung: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/images%20(1).jpg"
+  
+  // Die 9 neuen:
+  new1: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/20180526_084319_ergebnis.webp",
+  new2: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/20181123_200544_ergebnis.webp",
+  new3: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/20240126_194040_ergebnis.webp",
+  new4: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/20240221_172750_ergebnis.webp",
+  new5: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/IMG-20180722-WA0009_ergebnis.webp",
+  new6: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/IMG-20180722-WA0010%20(1)_ergebnis.webp",
+  new7: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/IMG-20191102-WA0011_ergebnis.webp",
+  new8: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/IMG-20260124-WA0013_ergebnis.webp",
+  new9: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/Screenshot_20170118-200903_ergebnis.webp"
 };
 
 
@@ -94,7 +101,6 @@ export default function App() {
   const [currentCalendarMonth, setCurrentCalendarMonth] = useState(new Date(2026, 5, 1)); // June 2026
   const [tourType, setTourType] = useState<'classic' | 'school'>('classic');
   const [groupSize, setGroupSize] = useState<number>(10);
-  const [gewandZuschlag, setGewandZuschlag] = useState<boolean>(true);
   const [activeFormStep, setActiveFormStep] = useState<1 | 2 | 3>(1);
   
   // Contact details state
@@ -180,8 +186,7 @@ export default function App() {
     if (tourType === 'classic' && groupSize > 20) {
       extra = (groupSize - 20) * 5;
     }
-    let gewand = gewandZuschlag ? 10 : 0;
-    return base + extra + gewand;
+    return base + extra;
   };
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
@@ -217,7 +222,7 @@ export default function App() {
       date: formattedDate,
       tourType: tourType === 'classic' ? 'Standard Nachtwächter-Führung' : 'Schulklasse / Jugendgruppe',
       groupSize,
-      gewandZuschlag,
+      gewandZuschlag: false,
       cost: calculateTotalCost()
     };
 
@@ -468,8 +473,8 @@ export default function App() {
                 viewport={{ once: true }}
                 variants={staggerContainer}
               >
-                <motion.span className="gothic-eyebrow" variants={fadeUp}>Anno Domini 1026</motion.span>
-                <motion.span className="section-tag" variants={fadeUp}>Mit Stephan van Hausen durch die Schatten der Stadt</motion.span>
+                <motion.span className="gothic-eyebrow" variants={fadeUp}>Anno Domini 1025</motion.span>
+                <motion.span className="section-tag" variants={fadeUp}>Keine normale Stadtführung – Mit Stephan van Hausen durch die Schatten der Stadt</motion.span>
                 <motion.h1 className="hero-headline" variants={fadeUp}>
                   Wenn die Stadt zur Ruhe kommt, beginnt <span>seine Geschichte</span>.
                 </motion.h1>
@@ -752,7 +757,13 @@ export default function App() {
                 <li style={{ display: 'flex', gap: '12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '22px', height: '22px', borderRadius: '50%', backgroundColor: 'var(--accent)', color: 'var(--bg-dark)', fontWeight: 'bold', fontSize: '0.75rem', flexShrink: 0 }}>✓</div>
                   <div>
-                    <strong style={{ color: 'var(--text-main)' }}>Historisches Gewand:</strong> Ein echter Blickfang, der die Vergangenheit atmen lässt.
+                    <strong style={{ color: 'var(--text-main)' }}>Historisches Gewand:</strong> Ein echter Blickfang, der die Vergangenheit atmen lässt (im Preis bereits inbegriffen).
+                  </div>
+                </li>
+                <li style={{ display: 'flex', gap: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '22px', height: '22px', borderRadius: '50%', backgroundColor: 'var(--accent)', color: 'var(--bg-dark)', fontWeight: 'bold', fontSize: '0.75rem', flexShrink: 0 }}>✓</div>
+                  <div>
+                    <strong style={{ color: 'var(--text-main)' }}>Sprichwörter &amp; Redensarten:</strong> Woher kommt „etwas auf dem Kerbholz haben“? Auf der Führung werden zahlreiche historische Redensarten lebendig erklärt.
                   </div>
                 </li>
                 <li style={{ display: 'flex', gap: '12px' }}>
@@ -775,7 +786,7 @@ export default function App() {
             <span className="section-tag">Was dich erwartet</span>
             <h2 className="section-title">Nienburgs Gassen <span>erzählen ihre Geheimnisse</span></h2>
             <p className="section-text" style={{ margin: '0 auto' }}>
-              <strong>Keine langweiligen Fakten, sondern echte Highlights.</strong> Erfahre spannende Legenden über das „Wählige Rott“, Hexensagen, die dramatische Belagerung der Stadt und die Schicksale der historischen Nienburger.
+              <strong>Keine langweiligen Fakten, sondern echte Highlights.</strong> Erfahre spannende Legenden über das „Wählige Rott“, Hexensagen, die dramatische Belagerung der Stadt und warum wir eigentlich „auf der faulen Haut liegen“ oder „eine Schippe drauflegen“ – Stefan erklärt die historischen Ursprünge vieler bekannter Sprichwörter.
             </p>
           </div>
 
@@ -863,6 +874,12 @@ export default function App() {
                     <strong style={{ color: 'var(--text-main)' }}>Schulklassen & Jugendgruppen:</strong> Geschichte zum Anfassen. Pädagogisch wertvoll, spannend inszeniert und absolut jugendgerecht.
                   </div>
                 </div>
+                <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
+                  <span style={{ color: 'var(--accent)', fontSize: '1.25rem', fontWeight: 'bold', lineHeight: '1' }}>✦</span>
+                  <div className="section-text">
+                    <strong style={{ color: 'var(--text-main)' }}>Flexibel vor Ort bei dir:</strong> Ich trage mein historisches Wissen flexibel direkt bei euch zu Hause (in Altenheimen, Schulen oder Privathäusern) vor, falls ihr nicht zu mir nach Nienburg kommen könnt.
+                  </div>
+                </div>
               </div>
               <div style={{ marginTop: '35px' }}>
                 <button className="btn-medieval-cta" onClick={() => scrollToSection('buchung')}>
@@ -901,39 +918,53 @@ export default function App() {
           </div>
 
           <div className="galerie-grid">
-            {/* Image 1: Weinhaus Gruppe 01 */}
-            <div className="galerie-item big" onClick={() => setLightboxImg(GALLERY_IMAGES.weinhaus1)}>
-              <img src={GALLERY_IMAGES.weinhaus1} alt="Nachtwächter Führung Nienburg Weinhaus" />
+            {/* Reihe 1 & 2 */}
+            <div className="galerie-item big" onClick={() => setLightboxImg(GALLERY_IMAGES.new1)}>
+              <img src={GALLERY_IMAGES.new1} alt="Nachtwächter Führung Nienburg Altstadt" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
-            {/* Image 2: Nachtwächter & Gast */}
-            <div className="galerie-item tall" onClick={() => setLightboxImg(GALLERY_IMAGES.stefanMike)}>
-              <img src={GALLERY_IMAGES.stefanMike} alt="Nachtwächter Stephan van Hausen im Gespräch" />
+            <div className="galerie-item tall" onClick={() => setLightboxImg(GALLERY_IMAGES.new2)}>
+              <img src={GALLERY_IMAGES.new2} alt="Stefan Hilker als Nachtwächter" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
-            {/* Image 3: Nachtwächter in der Gasse */}
-            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.nachtwaechterGasse)}>
-              <img src={GALLERY_IMAGES.nachtwaechterGasse} alt="Nachtwächter Führung Altstadt" />
+            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new3)}>
+              <img src={GALLERY_IMAGES.new3} alt="Historische Nienburger Stadtführung" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
-            {/* Image 4: Likör Verkostung */}
-            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.likoer)}>
-              <img src={GALLERY_IMAGES.likoer} alt="Nachtwächter Likör Spezialität" />
+            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new4)}>
+              <img src={GALLERY_IMAGES.new4} alt="Nachtwächter Führung bei Mondlicht" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
-            {/* Image 5: Gruppe bei Nacht */}
+
+            {/* Reihe 3 */}
             <div className="galerie-item wide" onClick={() => setLightboxImg(GALLERY_IMAGES.fuehrungNacht)}>
               <img src={GALLERY_IMAGES.fuehrungNacht} alt="Nachtwächter-Führung Nienburg Gruppe" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
-            {/* Image 6: Weinhaus Gruppe 02 */}
-            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.weinhaus2)}>
-              <img src={GALLERY_IMAGES.weinhaus2} alt="Gruppe beim historischen Weinhaus" />
+            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new5)}>
+              <img src={GALLERY_IMAGES.new5} alt="Stadtgeschichte hautnah erleben" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
-            {/* Image 7: Stimmungsvolle Gasse */}
-            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.gasseStimmung)}>
-              <img src={GALLERY_IMAGES.gasseStimmung} alt="Historische Nienburger Altstadtgasse" />
+            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new6)}>
+              <img src={GALLERY_IMAGES.new6} alt="Traditionelle Kostüme und Laternenlicht" />
+              <div className="galerie-item-overlay">Vergrößern</div>
+            </div>
+
+            {/* Reihe 4 */}
+            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new7)}>
+              <img src={GALLERY_IMAGES.new7} alt="Historische Redensarten und Sagen" />
+              <div className="galerie-item-overlay">Vergrößern</div>
+            </div>
+            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new8)}>
+              <img src={GALLERY_IMAGES.new8} alt="Stadtführung Nienburg bei Nacht" />
+              <div className="galerie-item-overlay">Vergrößern</div>
+            </div>
+            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new9)}>
+              <img src={GALLERY_IMAGES.new9} alt="Gruppen-Erlebnis im Fackelschein" />
+              <div className="galerie-item-overlay">Vergrößern</div>
+            </div>
+            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.nachtwaechterGasse)}>
+              <img src={GALLERY_IMAGES.nachtwaechterGasse} alt="Nachtwächter Führung Altstadtgasse" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
           </div>
@@ -1003,8 +1034,8 @@ export default function App() {
                     <span className="preis-item-val">70,00 € (Pauschal)</span>
                   </li>
                   <li className="preis-item">
-                    <span className="preis-item-title">Zuschlag für Führung im Gewand</span>
-                    <span className="preis-item-val">+ 10,00 €</span>
+                    <span className="preis-item-title">Historisches Gewand</span>
+                    <span className="preis-item-val" style={{ color: '#10b981', fontWeight: 600 }}>Inklusive</span>
                   </li>
                 </ul>
                 <p className="preis-hinweis">
@@ -1153,15 +1184,6 @@ export default function App() {
                               </span>
                             </div>
                           )}
-
-                          <label className="form-control-check" style={{ marginBottom: '0px' }}>
-                            <input 
-                              type="checkbox" 
-                              checked={gewandZuschlag} 
-                              onChange={(e) => setGewandZuschlag(e.target.checked)} 
-                            />
-                            <span>Nachtwächter im historischen Gewand (+10,00 €)</span>
-                          </label>
 
                           {/* Next Navigation for Mobile only */}
                           <div className="mobile-step-nav">
@@ -1334,7 +1356,7 @@ export default function App() {
                               )}
                               <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
                                 <span>Im Gewand:</span>
-                                <span>{gewandZuschlag ? 'Ja (+10€)' : 'Nein'}</span>
+                                <span style={{ color: '#10b981', fontWeight: 600 }}>Inklusive</span>
                               </div>
                               <div className="booking-summary-row total" style={{ paddingTop: '8px', marginTop: '8px' }}>
                                 <span>Voraussichtlicher Preis:</span>
@@ -1437,17 +1459,17 @@ export default function App() {
             <div className="footer-col">
               <h4>Kontakt</h4>
               <p style={{ marginBottom: '16px' }}>
-                Nachtwächter-Führungen<br />
-                Stephan van Hausen<br />
-                Fachwerkstraße 12<br />
-                31582 Nienburg/Weser
+                Stefan Hilker<br />
+                Stephan van Hausen als Nienburger Nachtwächter<br />
+                Im Osterfeld 44<br />
+                31632 Husum
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <a href="tel:+495021987654" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
-                  <Phone size={14} /> +49 (0) 5021 987654
+                <a href="tel:+4916094813232" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+                  <Phone size={14} /> 0160 / 94813232
                 </a>
-                <a href="mailto:info@nachtwaechter-nienburg.de" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
-                  <Mail size={14} /> info@nachtwaechter-nienburg.de
+                <a href="mailto:Info@nienburger-nachtwaechter.de" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+                  <Mail size={14} /> Info@nienburger-nachtwaechter.de
                 </a>
               </div>
             </div>
@@ -1519,21 +1541,21 @@ export default function App() {
                   <div>
                     <h4>Angaben gemäß § 5 TMG</h4>
                     <p>
-                      Nachtwächter-Führungen Nienburg<br />
-                      Stephan van Hausen<br />
-                      Fachwerkstraße 12<br />
-                      31582 Nienburg/Weser
+                      Stefan Hilker<br />
+                      Stephan van Hausen als Nienburger Nachtwächter<br />
+                      Im Osterfeld 44<br />
+                      31632 Husum
                     </p>
                     <h4>Kontakt</h4>
                     <p>
-                      Telefon: +49 (0) 5021 987654<br />
-                      E-Mail: info@nachtwaechter-nienburg.de
+                      Mobil: 0160 / 94813232<br />
+                      E-Mail: Info@nienburger-nachtwaechter.de
                     </p>
                     <h4>Redaktionell verantwortlich</h4>
                     <p>
-                      Stephan van Hausen<br />
-                      Fachwerkstraße 12<br />
-                      31582 Nienburg/Weser
+                      Stefan Hilker<br />
+                      Im Osterfeld 44<br />
+                      31632 Husum
                     </p>
                     <h4>Verbraucherstreitbeilegung/Universalschlichtungsstelle</h4>
                     <p>
@@ -1554,10 +1576,11 @@ export default function App() {
                       Die Datenverarbeitung auf dieser Website erfolgt durch den Websitebetreiber:
                     </p>
                     <p style={{ paddingLeft: '16px', borderLeft: '2px solid var(--accent)' }}>
-                      Stephan van Hausen<br />
-                      Fachwerkstraße 12<br />
-                      31582 Nienburg/Weser<br />
-                      E-Mail: info@nachtwaechter-nienburg.de
+                      Stefan Hilker<br />
+                      Stephan van Hausen als Nienburger Nachtwächter<br />
+                      Im Osterfeld 44<br />
+                      31632 Husum<br />
+                      E-Mail: Info@nienburger-nachtwaechter.de
                     </p>
                     <p>
                       Ihre Daten werden zum einen dadurch erhoben, dass Sie uns diese mitteilen. Hierbei handelt es sich um die Daten, die Sie in unser Buchungsanfrage-Formular eingeben (Name, E-Mail-Adresse, Telefonnummer, Wunschtermin, Gruppengröße und optionale Nachricht). Andere Daten werden automatisch oder nach Ihrer Einwilligung beim Besuch der Website durch unsere IT-Systeme erfasst. Das sind vor allem technische Daten (z. B. Internetbrowser, Betriebssystem oder Uhrzeit des Seitenaufrufs). Die Erfassung dieser Daten erfolgt automatisch, sobald Sie diese Website betreten.
