@@ -66,14 +66,12 @@ const IMAGES = {
   heroBg: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Nienburg-Mondlicht.png",
 };
 
-// New Gallery Images from Cloudflare R2 website-datein storage folder
 const GALLERY_IMAGES = {
   // Die 2 alten, die bleiben sollen:
   fuehrungNacht: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/1000_fuehrung_nachtwaechter_nienburg_20_.jpg",
   nachtwaechterGasse: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/3LPC2YQCTKNBB7ZRMCIAYE6IL6.avif",
   
-  // Die 9 neuen:
-  new1: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/20180526_084319_ergebnis.webp",
+  // Die 8 verbleibenden neuen:
   new2: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/20181123_200544_ergebnis.webp",
   new3: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/20240126_194040_ergebnis.webp",
   new4: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/20240221_172750_ergebnis.webp",
@@ -1176,30 +1174,12 @@ export default function App() {
 
           <div className="galerie-grid">
             {/* Reihe 1 & 2 */}
-            <div className="galerie-item big" onClick={() => setLightboxImg(GALLERY_IMAGES.new1)}>
-              <img src={GALLERY_IMAGES.new1} alt="Nachtwächter Führung Nienburg Altstadt" />
-              <div className="galerie-item-overlay">Vergrößern</div>
-            </div>
             <div className="galerie-item big" onClick={() => setLightboxImg(GALLERY_IMAGES.new2)}>
               <img src={GALLERY_IMAGES.new2} alt="Stefan Hilker als Nachtwächter" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
-
-            {/* Reihe 3 & 4 */}
-            <div className="galerie-item tall" onClick={() => setLightboxImg(GALLERY_IMAGES.new3)}>
-              <img src={GALLERY_IMAGES.new3} alt="Historische Nienburger Stadtführung" />
-              <div className="galerie-item-overlay">Vergrößern</div>
-            </div>
-            <div className="galerie-item wide" onClick={() => setLightboxImg(GALLERY_IMAGES.fuehrungNacht)}>
-              <img src={GALLERY_IMAGES.fuehrungNacht} alt="Nachtwächter-Führung Nienburg Gruppe" />
-              <div className="galerie-item-overlay">Vergrößern</div>
-            </div>
             <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new4)}>
               <img src={GALLERY_IMAGES.new4} alt="Nachtwächter Führung bei Mondlicht" />
-              <div className="galerie-item-overlay">Vergrößern</div>
-            </div>
-            <div className="galerie-item wide" onClick={() => setLightboxImg(GALLERY_IMAGES.new5)}>
-              <img src={GALLERY_IMAGES.new5} alt="Stadtgeschichte hautnah erleben" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
             <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new6)}>
@@ -1207,7 +1187,7 @@ export default function App() {
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
 
-            {/* Reihe 5 */}
+            {/* Reihe 2 & 3 */}
             <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new7)}>
               <img src={GALLERY_IMAGES.new7} alt="Historische Redensarten und Sagen" />
               <div className="galerie-item-overlay">Vergrößern</div>
@@ -1216,6 +1196,22 @@ export default function App() {
               <img src={GALLERY_IMAGES.new8} alt="Stadtführung Nienburg bei Nacht" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
+
+            {/* Reihe 3 & 4 */}
+            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.fuehrungNacht)}>
+              <img src={GALLERY_IMAGES.fuehrungNacht} alt="Nachtwächter-Führung Nienburg Gruppe" />
+              <div className="galerie-item-overlay">Vergrößern</div>
+            </div>
+            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new5)}>
+              <img src={GALLERY_IMAGES.new5} alt="Stadtgeschichte hautnah erleben" />
+              <div className="galerie-item-overlay">Vergrößern</div>
+            </div>
+            <div className="galerie-item big" onClick={() => setLightboxImg(GALLERY_IMAGES.new3)}>
+              <img src={GALLERY_IMAGES.new3} alt="Historische Nienburger Stadtführung" />
+              <div className="galerie-item-overlay">Vergrößern</div>
+            </div>
+
+            {/* Reihe 4 */}
             <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new9)}>
               <img src={GALLERY_IMAGES.new9} alt="Gruppen-Erlebnis im Fackelschein" />
               <div className="galerie-item-overlay">Vergrößern</div>
