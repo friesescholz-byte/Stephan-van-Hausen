@@ -91,7 +91,7 @@ export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // Modals state
-  const [activeModal, setActiveModal] = useState<null | 'impressum' | 'datenschutz' | 'agb'>(null);
+  const [activeModal, setActiveModal] = useState<null | 'impressum' | 'datenschutz'>(null);
   
   // Gallery Lightbox state
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
@@ -103,6 +103,49 @@ export default function App() {
   const [groupSize, setGroupSize] = useState<number>(10);
   const [activeFormStep, setActiveFormStep] = useState<1 | 2 | 3>(1);
   
+  // Admin Backend states
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [adminPasswordInput, setAdminPasswordInput] = useState("");
+  const [adminLoginError, setAdminLoginError] = useState("");
+  const [blockedDates, setBlockedDates] = useState<string[]>([]);
+
+  // Popstate/URL check for /admin route
+  useEffect(() => {
+    const checkAdminRoute = () => {
+      const path = window.location.pathname;
+      const search = window.location.search;
+      const hash = window.location.hash;
+      
+      if (path === '/admin' || search.includes('admin=true') || hash === '#admin') {
+        setIsAdminMode(true);
+      } else {
+        setIsAdminMode(false);
+      }
+    };
+
+    checkAdminRoute();
+    window.addEventListener('popstate', checkAdminRoute);
+    
+    // Check local storage for blocked dates
+    const saved = localStorage.getItem('nienburger_nachtwaechter_blocked_dates');
+    if (saved) {
+      try {
+        setBlockedDates(JSON.parse(saved));
+      } catch (e) {}
+    }
+
+    // Check session storage for admin login session
+    const loggedIn = sessionStorage.getItem('nienburger_nachtwaechter_admin_auth');
+    if (loggedIn === 'true') {
+      setIsAdminLoggedIn(true);
+    }
+
+    return () => {
+      window.removeEventListener('popstate', checkAdminRoute);
+    };
+  }, []);
+
   // Contact details state
   const [formData, setFormData] = useState({
     name: '',
@@ -307,6 +350,14 @@ export default function App() {
     );
   };
 
+  const isDayBlocked = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const dateStr = `${y}-${m}-${d}`;
+    return blockedDates.includes(dateStr);
+  };
+
   const isDayDisabled = (dayNum: number | null) => {
     if (!dayNum) return true;
     const dateToCheck = new Date(
@@ -315,7 +366,8 @@ export default function App() {
       dayNum
     );
     const today = new Date(2026, 5, 2); // Set reference system date June 2, 2026
-    return dateToCheck < today;
+    if (dateToCheck < today) return true;
+    return isDayBlocked(dateToCheck);
   };
 
   const handleDayClick = (dayNum: number | null) => {
@@ -337,6 +389,211 @@ export default function App() {
     }
     setIsMobileMenuOpen(false);
   };
+
+  // Admin handlers
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setAdminLoginError("");
+    if (adminPasswordInput === "nienburg1025") {
+      setIsAdminLoggedIn(true);
+      sessionStorage.setItem('nienburger_nachtwaechter_admin_auth', 'true');
+      setAdminPasswordInput("");
+    } else {
+      setAdminLoginError("Falsches Passwort!");
+    }
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdminLoggedIn(false);
+    sessionStorage.removeItem('nienburger_nachtwaechter_admin_auth');
+  };
+
+  const toggleBlockDate = (dateStr: string) => {
+    let updated;
+    if (blockedDates.includes(dateStr)) {
+      updated = blockedDates.filter(d => d !== dateStr);
+    } else {
+      updated = [...blockedDates, dateStr].sort();
+    }
+    setBlockedDates(updated);
+    localStorage.setItem('nienburger_nachtwaechter_blocked_dates', JSON.stringify(updated));
+  };
+
+  const clearAllBlockedDates = () => {
+    if (window.confirm("Möchtest du wirklich alle gesperrten Termine wieder freigeben?")) {
+      setBlockedDates([]);
+      localStorage.removeItem('nienburger_nachtwaechter_blocked_dates');
+    }
+  };
+
+  const formatGermanDate = (dateStr: string) => {
+    const [y, m, d] = dateStr.split('-');
+    return `${d}.${m}.${y}`;
+  };
+
+  if (isAdminMode) {
+    return (
+      <div className="admin-layout" style={{ minHeight: '100vh', background: 'var(--bg-dark)', color: 'var(--text-main)', padding: '40px 20px', fontFamily: 'var(--font-sans)' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+          
+          {/* Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', borderBottom: '1px solid var(--border-color)', paddingBottom: '20px' }}>
+            <div>
+              <h1 className="font-medieval" style={{ fontSize: '2.5rem', color: 'var(--accent)', margin: 0 }}>Wächter-Portal</h1>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '5px' }}>Terminverwaltung für Stefan Hilker</p>
+            </div>
+            <button 
+              className="btn btn-secondary" 
+              onClick={() => {
+                window.history.pushState({}, '', '/');
+                setIsAdminMode(false);
+              }}
+            >
+              Zurück zur Website
+            </button>
+          </div>
+
+          {!isAdminLoggedIn ? (
+            /* Login Form */
+            <div className="preis-card" style={{ maxWidth: '400px', margin: '60px auto', padding: '30px', textAlign: 'center' }}>
+              <h3 className="font-medieval" style={{ fontSize: '1.8rem', color: 'var(--accent)', marginBottom: '20px' }}>Anmeldung erforderlich</h3>
+              <form onSubmit={handleAdminLogin}>
+                <div className="form-group" style={{ marginBottom: '20px', textAlign: 'left' }}>
+                  <label htmlFor="adminPassword">Passwort</label>
+                  <input 
+                    id="adminPassword"
+                    type="password" 
+                    required 
+                    className="form-control" 
+                    placeholder="Wächter-Passwort..."
+                    value={adminPasswordInput}
+                    onChange={(e) => setAdminPasswordInput(e.target.value)}
+                    style={{ width: '100%', marginTop: '8px' }}
+                  />
+                </div>
+                {adminLoginError && (
+                  <div className="status-alert error" style={{ marginBottom: '20px', fontSize: '0.85rem' }}>
+                    <ShieldAlert size={16} /> {adminLoginError}
+                  </div>
+                )}
+                <button type="submit" className="btn-medieval-cta" style={{ width: '100%' }}>
+                  <Flame size={16} className="glow-glow" /> Portal betreten
+                </button>
+              </form>
+            </div>
+          ) : (
+            /* Admin Dashboard */
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                <h3 style={{ fontSize: '1.4rem', color: 'var(--text-main)' }}>Verfügbarkeit steuern</h3>
+                <button className="footer-link-btn" onClick={handleAdminLogout} style={{ color: 'var(--text-muted)' }}>Abmelden</button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '30px' }} className="booking-grid-wrapper">
+                
+                {/* Calendar Card */}
+                <div className="booking-container" style={{ padding: '24px' }}>
+                  <h4 style={{ color: 'var(--accent)', marginBottom: '16px', fontSize: '1.1rem' }}>Kalender (Tage anklicken zum Sperren/Freigeben)</h4>
+                  
+                  <div className="calendar-widget" style={{ marginBottom: 0 }}>
+                    <div className="calendar-header">
+                      <button type="button" className="calendar-nav-btn" onClick={() => handleMonthChange('prev')}>
+                        <ChevronLeft size={18} />
+                      </button>
+                      <span className="calendar-month-title">
+                        {currentCalendarMonth.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}
+                      </span>
+                      <button type="button" className="calendar-nav-btn" onClick={() => handleMonthChange('next')}>
+                        <ChevronRight size={18} />
+                      </button>
+                    </div>
+
+                    <div className="calendar-grid">
+                      {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map(d => (
+                        <div key={d} className="calendar-weekday">{d}</div>
+                      ))}
+                      {generateCalendarDays().map((dayObj, index) => {
+                        if (dayObj.dayNumber === null) {
+                          return <div key={index} className="calendar-day empty" />;
+                        }
+                        
+                        const date = new Date(
+                          currentCalendarMonth.getFullYear(),
+                          currentCalendarMonth.getMonth(),
+                          dayObj.dayNumber
+                        );
+                        const isPast = date < new Date(2026, 5, 2);
+                        
+                        const y = date.getFullYear();
+                        const m = String(date.getMonth() + 1).padStart(2, '0');
+                        const d = String(date.getDate()).padStart(2, '0');
+                        const dateStr = `${y}-${m}-${d}`;
+                        const isBlocked = blockedDates.includes(dateStr);
+                        
+                        return (
+                          <div 
+                            key={index} 
+                            className={`calendar-day ${isBlocked ? 'disabled' : ''}`}
+                            style={{ 
+                              background: isPast ? 'transparent' : isBlocked ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.1)',
+                              border: isBlocked ? '1px solid #ef4444' : '1px solid rgba(16, 185, 129, 0.4)',
+                              color: isPast ? 'rgba(255,255,255,0.15)' : isBlocked ? '#f87171' : '#34d399',
+                              cursor: isPast ? 'not-allowed' : 'pointer'
+                            }}
+                            onClick={() => {
+                              if (!isPast) {
+                                toggleBlockDate(dateStr);
+                              }
+                            }}
+                          >
+                            {dayObj.dayNumber}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '16px' }}>
+                    🟢 Grün = Termin ist frei (Standard) | 🔴 Rot = Termin ist belegt/gesperrt
+                  </p>
+                </div>
+
+                {/* Blocked Dates List Card */}
+                <div className="booking-container" style={{ padding: '24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <h4 style={{ color: 'var(--accent)', fontSize: '1.1rem', margin: 0 }}>Gesperrte Termine ({blockedDates.length})</h4>
+                    {blockedDates.length > 0 && (
+                      <button className="footer-link-btn" onClick={clearAllBlockedDates} style={{ color: '#ef4444' }}>Alle freigeben</button>
+                    )}
+                  </div>
+                  
+                  {blockedDates.length === 0 ? (
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontStyle: 'italic', margin: 0 }}>Keine Tage gesperrt. Alle Termine sind online frei buchbar.</p>
+                  ) : (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', maxHeight: '200px', overflowY: 'auto', paddingRight: '8px' }}>
+                      {blockedDates.map(dateStr => (
+                        <div key={dateStr} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '4px', padding: '6px 12px', fontSize: '0.85rem', color: '#f87171' }}>
+                          <span>{formatGermanDate(dateStr)}</span>
+                          <button 
+                            type="button" 
+                            style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem', padding: 0 }}
+                            onClick={() => toggleBlockDate(dateStr)}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -923,25 +1180,25 @@ export default function App() {
               <img src={GALLERY_IMAGES.new1} alt="Nachtwächter Führung Nienburg Altstadt" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
-            <div className="galerie-item tall" onClick={() => setLightboxImg(GALLERY_IMAGES.new2)}>
+            <div className="galerie-item big" onClick={() => setLightboxImg(GALLERY_IMAGES.new2)}>
               <img src={GALLERY_IMAGES.new2} alt="Stefan Hilker als Nachtwächter" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
-            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new3)}>
+
+            {/* Reihe 3 & 4 */}
+            <div className="galerie-item tall" onClick={() => setLightboxImg(GALLERY_IMAGES.new3)}>
               <img src={GALLERY_IMAGES.new3} alt="Historische Nienburger Stadtführung" />
+              <div className="galerie-item-overlay">Vergrößern</div>
+            </div>
+            <div className="galerie-item wide" onClick={() => setLightboxImg(GALLERY_IMAGES.fuehrungNacht)}>
+              <img src={GALLERY_IMAGES.fuehrungNacht} alt="Nachtwächter-Führung Nienburg Gruppe" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
             <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new4)}>
               <img src={GALLERY_IMAGES.new4} alt="Nachtwächter Führung bei Mondlicht" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
-
-            {/* Reihe 3 */}
-            <div className="galerie-item wide" onClick={() => setLightboxImg(GALLERY_IMAGES.fuehrungNacht)}>
-              <img src={GALLERY_IMAGES.fuehrungNacht} alt="Nachtwächter-Führung Nienburg Gruppe" />
-              <div className="galerie-item-overlay">Vergrößern</div>
-            </div>
-            <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new5)}>
+            <div className="galerie-item wide" onClick={() => setLightboxImg(GALLERY_IMAGES.new5)}>
               <img src={GALLERY_IMAGES.new5} alt="Stadtgeschichte hautnah erleben" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
@@ -950,7 +1207,7 @@ export default function App() {
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
 
-            {/* Reihe 4 */}
+            {/* Reihe 5 */}
             <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new7)}>
               <img src={GALLERY_IMAGES.new7} alt="Historische Redensarten und Sagen" />
               <div className="galerie-item-overlay">Vergrößern</div>
@@ -1459,10 +1716,7 @@ export default function App() {
             <div className="footer-col">
               <h4>Kontakt</h4>
               <p style={{ marginBottom: '16px' }}>
-                Stefan Hilker<br />
-                Stephan van Hausen als Nienburger Nachtwächter<br />
-                Im Osterfeld 44<br />
-                31632 Husum
+                <strong>Nachtwächter-Führungen Nienburg</strong>
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <a href="tel:+4916094813232" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
@@ -1499,20 +1753,15 @@ export default function App() {
                   Datenschutz
                 </button>
               </li>
-              <li>
-                <button className="footer-link-btn" onClick={() => setActiveModal('agb')}>
-                  AGB
-                </button>
-              </li>
             </ul>
             <p style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.25)' }}>
-              Design von <span style={{ color: 'var(--accent)', fontWeight: 600 }}>Scholz & Friese</span>
+              Design von <a href="https://scholz-friese-webdesign.de/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600, textDecoration: 'none' }}>Scholz & Friese Webdesign</a>
             </p>
           </div>
         </div>
       </footer>
 
-      {/* Premium Modals (Impressum, Datenschutz, AGB) */}
+      {/* Premium Modals (Impressum, Datenschutz) */}
       <AnimatePresence>
         {activeModal && (
           <motion.div 
@@ -1530,7 +1779,7 @@ export default function App() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="modal-header">
-                <h3>{activeModal === 'impressum' ? 'Impressum' : activeModal === 'datenschutz' ? 'Datenschutzerklärung' : 'Allgemeine Geschäftsbedingungen'}</h3>
+                <h3>{activeModal === 'impressum' ? 'Impressum' : 'Datenschutzerklärung'}</h3>
                 <button className="modal-close-btn" onClick={() => setActiveModal(null)}>
                   <X size={24} />
                 </button>
@@ -1643,25 +1892,6 @@ export default function App() {
                   </div>
                 )}
 
-                {activeModal === 'agb' && (
-                  <div>
-                    <h4>1. Geltungsbereich</h4>
-                    <p>
-                      Diese Allgemeinen Geschäftsbedingungen gelten für alle Führungen und Leistungen, die durch den Nachtwächter Stephan van Hausen in Nienburg erbracht werden.
-                    </p>
-                    <h4>2. Vertragsabschluss & Stornierung</h4>
-                    <p>
-                      Durch das Absenden der Terminanfrage auf dieser Website geben Sie ein unverbindliches Angebot ab. Ein verbindlicher Vertrag kommt erst zustande, wenn wir den Termin schriftlich (per E-Mail) bestätigen.
-                    </p>
-                    <p>
-                      Stornierungen von Gruppenbuchungen sind bis zu 48 Stunden vor dem vereinbarten Führungstermin kostenfrei möglich. Bei späteren Absagen behalten wir uns vor, eine Ausfallpauschale in Höhe von 50 % des vereinbarten Preises in Rechnung zu stellen.
-                    </p>
-                    <h4>3. Durchführung & Haftung</h4>
-                    <p>
-                      Die Führungen finden grundsätzlich bei jedem Wetter statt, sofern keine akute Sicherheitsgefährdung (z.B. Unwetterwarnung) vorliegt. Die Teilnahme erfolgt auf eigene Gefahr. Für Sach- und Körperschäden haftet der Veranstalter nur bei Vorsatz oder grober Fahrlässigkeit.
-                    </p>
-                  </div>
-                )}
               </div>
             </motion.div>
           </motion.div>
