@@ -16,7 +16,8 @@ import {
   Check,
   Phone,
   Mail,
-  User
+  User,
+  Clock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -99,6 +100,7 @@ export default function App() {
   const [currentCalendarMonth, setCurrentCalendarMonth] = useState(new Date(2026, 5, 1)); // June 2026
   const [tourType, setTourType] = useState<'classic' | 'school'>('classic');
   const [groupSize, setGroupSize] = useState<number>(10);
+  const [selectedTime, setSelectedTime] = useState<string>("19:00");
   const [activeFormStep, setActiveFormStep] = useState<1 | 2 | 3>(1);
   
   // Admin Backend states
@@ -261,6 +263,7 @@ export default function App() {
       phone: formData.phone,
       message: formData.message,
       date: formattedDate,
+      time: selectedTime,
       tourType: tourType === 'classic' ? 'Standard Nachtwächter-Führung' : 'Schulklasse / Jugendgruppe',
       groupSize,
       gewandZuschlag: false,
@@ -1390,10 +1393,26 @@ export default function App() {
                               })}
                             </div>
                             {selectedDate && (
-                              <div className="status-alert info" style={{ marginTop: '16px', fontSize: '0.85rem' }}>
-                                <CalendarIcon size={16} /> Ausgewählter Termin: <strong>
-                                  {selectedDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                                </strong>
+                              <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <div className="status-alert info" style={{ margin: 0, fontSize: '0.85rem' }}>
+                                  <CalendarIcon size={16} /> Ausgewählter Termin: <strong>
+                                    {selectedDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                  </strong>
+                                </div>
+                                <div className="form-group" style={{ maxWidth: '240px' }}>
+                                  <label htmlFor="inputTime" style={{ fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <Clock size={14} style={{ color: 'var(--accent)' }} /> Wunschuhrzeit wählen *
+                                  </label>
+                                  <input 
+                                    id="inputTime"
+                                    type="time" 
+                                    required
+                                    className="form-control"
+                                    style={{ width: '100%', cursor: 'pointer' }}
+                                    value={selectedTime}
+                                    onChange={(e) => setSelectedTime(e.target.value)}
+                                  />
+                                </div>
                               </div>
                             )}
                           </div>
@@ -1594,7 +1613,7 @@ export default function App() {
                               <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
                                 <span>Termin:</span>
                                 <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>
-                                  {selectedDate ? selectedDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Kein Termin ausgewählt'}
+                                  {selectedDate ? `${selectedDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })} um ${selectedTime} Uhr` : 'Kein Termin ausgewählt'}
                                 </span>
                               </div>
                               <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
