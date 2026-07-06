@@ -1480,7 +1480,7 @@ export default function App() {
                               <div className="form-group">
                                 <label htmlFor="inputName">Name *</label>
                                 <div style={{ position: 'relative' }}>
-                                  <User size={16} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--text-muted)' }} />
+                                  <User size={16} className="input-icon" />
                                   <input 
                                     id="inputName"
                                     type="text" 
@@ -1497,7 +1497,7 @@ export default function App() {
                               <div className="form-group">
                                 <label htmlFor="inputEmail">E-Mail *</label>
                                 <div style={{ position: 'relative' }}>
-                                  <Mail size={16} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--text-muted)' }} />
+                                  <Mail size={16} className="input-icon" />
                                   <input 
                                     id="inputEmail"
                                     type="email" 
@@ -1514,7 +1514,7 @@ export default function App() {
                               <div className="form-group booking-form-full">
                                 <label htmlFor="inputPhone">Telefonnummer</label>
                                 <div style={{ position: 'relative' }}>
-                                  <Phone size={16} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--text-muted)' }} />
+                                  <Phone size={16} className="input-icon" />
                                   <input 
                                     id="inputPhone"
                                     type="tel" 
