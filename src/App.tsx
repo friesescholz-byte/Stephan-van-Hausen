@@ -1546,7 +1546,7 @@ export default function App() {
                             </div>
 
                             {/* Navigation buttons for Mobile only */}
-                            <div className="mobile-step-nav" style={{ display: 'flex', gap: '12px' }}>
+                            <div className="mobile-step-nav" style={{ gap: '12px' }}>
                               <button 
                                 type="button" 
                                 className="btn btn-secondary" 
