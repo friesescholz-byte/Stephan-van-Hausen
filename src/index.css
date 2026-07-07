@@ -1042,30 +1042,30 @@ section {
 }
 
 .calendar-day.public-tour-day {
-  border: 1px solid rgba(217, 162, 74, 0.45) !important;
-  background-color: rgba(217, 162, 74, 0.12) !important;
-  color: var(--accent) !important;
+  border: 1px solid rgba(16, 185, 129, 0.4) !important;
+  background-color: rgba(16, 185, 129, 0.12) !important;
+  color: #10b981 !important;
   font-weight: 700;
-  box-shadow: 0 0 8px rgba(217, 162, 74, 0.15);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.15);
 }
 
 .calendar-day.public-tour-day:hover:not(.disabled):not(.selected) {
-  background-color: rgba(217, 162, 74, 0.22) !important;
-  border-color: var(--accent) !important;
-  box-shadow: 0 0 12px rgba(217, 162, 74, 0.3);
+  background-color: rgba(16, 185, 129, 0.22) !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
 }
 
 .calendar-day.public-tour-day.selected {
-  background-color: var(--accent) !important;
+  background-color: #10b981 !important;
   color: var(--bg-dark) !important;
-  border: 1px solid var(--accent) !important;
-  box-shadow: var(--shadow-gold-strong);
+  border: 1px solid #10b981 !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
 }
 
 .calendar-day.public-tour-day.disabled {
-  border-color: rgba(217, 162, 74, 0.15) !important;
-  background-color: rgba(217, 162, 74, 0.02) !important;
-  color: rgba(217, 162, 74, 0.25) !important;
+  border-color: rgba(16, 185, 129, 0.15) !important;
+  background-color: rgba(16, 185, 129, 0.02) !important;
+  color: rgba(16, 185, 129, 0.25) !important;
   box-shadow: none;
 }
 

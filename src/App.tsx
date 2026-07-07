@@ -1435,7 +1435,7 @@ export default function App() {
                                 <span>Ausgewählt</span>
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span style={{ display: 'inline-block', width: '12px', height: '12px', border: '1px solid rgba(217, 162, 74, 0.5)', backgroundColor: 'rgba(217, 162, 74, 0.15)', borderRadius: '3px' }}></span>
+                                <span style={{ display: 'inline-block', width: '12px', height: '12px', border: '1px solid rgba(16, 185, 129, 0.5)', backgroundColor: 'rgba(16, 185, 129, 0.15)', borderRadius: '3px' }}></span>
                                 <span>Öffentliche Führung (10€)</span>
                               </div>
                             </div>
