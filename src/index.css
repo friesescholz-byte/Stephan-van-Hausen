@@ -915,7 +915,7 @@ section {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 40px;
+  padding: 24px 30px;
   box-shadow: var(--shadow-card);
 }
 
@@ -1983,7 +1983,7 @@ input[type="range"]::-moz-range-thumb:hover {
   background-color: rgba(255, 255, 255, 0.01);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   overflow: hidden;
   transition: var(--transition-medium);
 }
@@ -1995,7 +1995,7 @@ input[type="range"]::-moz-range-thumb:hover {
 
 .booking-step-header {
   margin-bottom: 0;
-  padding: 18px 20px;
+  padding: 12px 18px;
   background-color: rgba(255, 255, 255, 0.02);
   cursor: pointer;
   user-select: none;
@@ -2003,7 +2003,7 @@ input[type="range"]::-moz-range-thumb:hover {
   justify-content: space-between;
   align-items: center;
   font-family: var(--font-sans);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-main);
 }
@@ -2055,7 +2055,13 @@ input[type="range"]::-moz-range-thumb:hover {
 
 .booking-step-body {
   min-height: 0;
-  padding: 24px 20px;
+  padding: 0 18px;
+  border-top: 0px solid transparent;
+  transition: padding 0.35s cubic-bezier(0.25, 1, 0.5, 1), border-top-width 0.35s, border-color 0.35s;
+}
+
+.booking-step-panel.is-active .booking-step-body {
+  padding: 18px 18px;
   border-top: 1px solid var(--border-color);
 }
 
@@ -2087,7 +2093,7 @@ input[type="range"]::-moz-range-thumb:hover {
     font-size: 0.75rem;
   }
   
-  .booking-step-body {
+  .booking-step-panel.is-active .booking-step-body {
     padding: 16px 12px;
   }
   
