@@ -1497,7 +1497,7 @@ export default function App() {
                               <p>Flache Pauschale für Schulklassen &amp; Kinder. Flat: 70€</p>
                             </div>
                             <div 
-                              className={`booking-option-card ${tourType === 'public' ? 'selected' : ''}`}
+                              className={`booking-option-card public-option ${tourType === 'public' ? 'selected' : ''}`}
                               onClick={() => {
                                 setTourType('public');
                                 setSelectedTime('18:00');

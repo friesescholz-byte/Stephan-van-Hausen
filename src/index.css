@@ -953,6 +953,10 @@ section {
 .calendar-widget {
   max-width: 380px;
   margin: 0 auto 20px auto;
+  background-color: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px 18px;
 }
 
 .calendar-header {
@@ -1095,6 +1099,22 @@ section {
 .booking-option-card.selected {
   border-color: var(--accent);
   background-color: var(--accent-glow);
+}
+
+.booking-option-card.public-option {
+  border-color: rgba(16, 185, 129, 0.25);
+  background-color: rgba(16, 185, 129, 0.03);
+}
+
+.booking-option-card.public-option:hover {
+  border-color: rgba(16, 185, 129, 0.5) !important;
+  background-color: rgba(16, 185, 129, 0.06);
+}
+
+.booking-option-card.public-option.selected {
+  border-color: #10b981 !important;
+  background-color: rgba(16, 185, 129, 0.12) !important;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
 }
 
 .booking-option-card h5 {
