@@ -1378,7 +1378,7 @@ export default function App() {
                   <div className="booking-grid-wrapper">
                     {/* Step 1: Wunschtermin & Konfiguration */}
                     <div className={`booking-step-panel ${activeFormStep === 1 ? 'is-active' : ''}`}>
-                      <div className="booking-step-header" onClick={() => { if (window.innerWidth < 992) setActiveFormStep(1); }}>
+                      <div className="booking-step-header" onClick={() => setActiveFormStep(1)}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           <span className={selectedDate ? 'completed' : ''}>
                             {selectedDate ? <Check size={12} strokeWidth={3} /> : '1'}
@@ -1558,7 +1558,7 @@ export default function App() {
                     <div className="booking-grid-right-col">
                       {/* Step 2: Contact details */}
                       <div className={`booking-step-panel ${activeFormStep === 2 ? 'is-active' : ''}`}>
-                        <div className="booking-step-header" onClick={() => { if (window.innerWidth < 992 && selectedDate) setActiveFormStep(2); }}>
+                        <div className="booking-step-header" onClick={() => { if (selectedDate) setActiveFormStep(2); }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <span className={(selectedDate && formData.name && formData.email) ? 'completed' : ''}>
                               {(selectedDate && formData.name && formData.email) ? <Check size={12} strokeWidth={3} /> : '2'}
@@ -1671,7 +1671,7 @@ export default function App() {
 
                       {/* Step 3: Zusammenfassung & Senden */}
                       <div className={`booking-step-panel ${activeFormStep === 3 ? 'is-active' : ''}`}>
-                        <div className="booking-step-header" onClick={() => { if (window.innerWidth < 992 && selectedDate && formData.name && formData.email) setActiveFormStep(3); }}>
+                        <div className="booking-step-header" onClick={() => { if (selectedDate && formData.name && formData.email) setActiveFormStep(3); }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <span>3</span> Zusammenfassung &amp; Senden
                           </div>
