@@ -1643,7 +1643,7 @@ input[type="range"]::-moz-range-thumb:hover {
     grid-row: span 2;
   }
   .galerie-item.tall {
-    grid-row: span 1;
+    grid-row: span 2;
   }
 }
 
@@ -1751,7 +1751,7 @@ input[type="range"]::-moz-range-thumb:hover {
   }
   .galerie-item.tall {
     grid-column: span 1;
-    grid-row: span 1;
+    grid-row: span 2;
   }
   .nav-container {
     padding: 0 16px;
