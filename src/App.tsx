@@ -90,7 +90,7 @@ export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // Modals state
-  const [activeModal, setActiveModal] = useState<null | 'impressum' | 'datenschutz'>(null);
+  const [activeModal, setActiveModal] = useState<null | 'impressum' | 'datenschutz' | 'barrierefreiheit'>(null);
   
   // Gallery Lightbox state
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
@@ -1864,6 +1864,11 @@ export default function App() {
                   Datenschutz
                 </button>
               </li>
+              <li>
+                <button className="footer-link-btn" onClick={() => setActiveModal('barrierefreiheit')}>
+                  Barrierefreiheit
+                </button>
+              </li>
             </ul>
             <p style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.25)' }}>
               Design von <a href="https://scholz-friese-webdesign.de/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 600, textDecoration: 'none' }}>Scholz & Friese Webdesign</a>
@@ -1890,7 +1895,7 @@ export default function App() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="modal-header">
-                <h3>{activeModal === 'impressum' ? 'Impressum' : 'Datenschutzerklärung'}</h3>
+                <h3>{activeModal === 'impressum' ? 'Impressum' : activeModal === 'datenschutz' ? 'Datenschutzerklärung' : 'Barrierefreiheitserklärung'}</h3>
                 <button className="modal-close-btn" onClick={() => setActiveModal(null)}>
                   <X size={24} />
                 </button>
@@ -1933,38 +1938,57 @@ export default function App() {
                     </p>
                     <p><strong>Datenerfassung auf dieser Website</strong></p>
                     <p>
-                      Die Datenverarbeitung auf dieser Website erfolgt durch den Websitebetreiber:
+                      Die Datenverarbeitung auf dieser Website erfolgt durch den Websitebetreiber. Ihre Daten werden zum einen dadurch erhoben, dass Sie uns diese mitteilen – beispielsweise durch Eingabe in unser Buchungsanfrage-Formular. Andere Daten werden automatisch oder nach Ihrer Einwilligung beim Besuch der Website durch unsere IT-Systeme erfasst. Das sind vor allem technische Daten (z.&nbsp;B. Internetbrowser, Betriebssystem oder Uhrzeit des Seitenaufrufs). Die Erfassung dieser Daten erfolgt automatisch, sobald Sie diese Website betreten.
                     </p>
+                    <p><strong>Wofür nutzen wir Ihre Daten?</strong></p>
+                    <p>
+                      Ein Teil der Daten wird erhoben, um eine fehlerfreie Bereitstellung der Website zu gewährleisten. Andere Daten können zur Analyse Ihres Nutzerverhaltens verwendet werden. Wenn Sie über das Buchungsformular eine Anfrage stellen, werden die Daten zur Bearbeitung Ihrer Anfrage genutzt.
+                    </p>
+                    <p><strong>Welche Rechte haben Sie bezüglich Ihrer Daten?</strong></p>
+                    <p>
+                      Sie haben jederzeit das Recht, unentgeltlich Auskunft über Herkunft, Empfänger und Zweck Ihrer gespeicherten personenbezogenen Daten zu erhalten. Sie haben außerdem ein Recht, die Berichtigung oder Löschung dieser Daten zu verlangen. Wenn Sie eine Einwilligung zur Datenverarbeitung erteilt haben, können Sie diese Einwilligung jederzeit für die Zukunft widerrufen. Außerdem haben Sie das Recht, unter bestimmten Umständen die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen. Des Weiteren steht Ihnen ein Beschwerderecht bei der zuständigen Aufsichtsbehörde zu.
+                    </p>
+
+                    <h4>2. Verantwortliche Stelle</h4>
+                    <p>Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:</p>
                     <p style={{ paddingLeft: '16px', borderLeft: '2px solid var(--accent)' }}>
                       Stefan Hilker<br />
                       Stephan van Hausen als Nienburger Nachtwächter<br />
                       Im Osterfeld 44<br />
                       31632 Husum<br />
+                      Mobil: 0160 / 94813232<br />
                       E-Mail: Info@nienburger-nachtwaechter.de
                     </p>
                     <p>
-                      Ihre Daten werden zum einen dadurch erhoben, dass Sie uns diese mitteilen. Hierbei handelt es sich um die Daten, die Sie in unser Buchungsanfrage-Formular eingeben (Name, E-Mail-Adresse, Telefonnummer, Wunschtermin, Gruppengröße und optionale Nachricht). Andere Daten werden automatisch oder nach Ihrer Einwilligung beim Besuch der Website durch unsere IT-Systeme erfasst. Das sind vor allem technische Daten (z. B. Internetbrowser, Betriebssystem oder Uhrzeit des Seitenaufrufs). Die Erfassung dieser Daten erfolgt automatisch, sobald Sie diese Website betreten.
+                      Verantwortliche Stelle ist die natürliche oder juristische Person, die allein oder gemeinsam mit anderen über die Zwecke und Mittel der Verarbeitung von personenbezogenen Daten (z.&nbsp;B. Namen, E-Mail-Adressen o.&nbsp;Ä.) entscheidet.
                     </p>
 
-                    <h4>2. Hosting und CDN (Cloudflare)</h4>
+                    <h4>3. Hosting und CDN (Cloudflare)</h4>
                     <p>
-                      Wir hosten unsere Website bei Cloudflare Pages. Anbieter ist die Cloudflare, Inc., 101 Townsend St., San Francisco, CA 94107, USA (nachfolgend „Cloudflare“).
+                      Wir hosten unsere Website bei Cloudflare Pages. Anbieter ist die Cloudflare, Inc., 101 Townsend St., San Francisco, CA 94107, USA (nachfolgend „Cloudflare").
                     </p>
                     <p>
-                      Cloudflare Pages ist ein global verfügbares Content Delivery Network (CDN) und Hosting-Dienst. Die Datenübertragung zwischen Ihrem Browser und unserer Website wird über das Server-Netzwerk von Cloudflare geleitet. Hierbei werden technische Protokolldaten (Logfiles), wie z. B. Ihre IP-Adresse, übertragen, um die Website auszuliefern, Angriffe abzuwehren und Ladezeiten zu optimieren. Dies stellt ein berechtigtes Interesse im Sinne des Art. 6 Abs. 1 lit. f DSGVO dar.
+                      Cloudflare Pages ist ein global verfügbares Content Delivery Network (CDN) und Hosting-Dienst. Technisch wird jeder Aufruf dieser Website über die Server von Cloudflare geleitet. Dabei werden Server-Logfiles erhoben, die unter anderem Ihre IP-Adresse, den aufgerufenen Inhalt, den Browser-Typ und den Zeitpunkt des Zugriffs enthalten können. Diese Daten werden von Cloudflare verarbeitet, um die Auslieferung der Website sicherzustellen, Angriffe abzuwehren und Ladezeiten zu optimieren.
                     </p>
                     <p>
-                      Cloudflare ist Teilnehmer des EU-US Data Privacy Frameworks. Die Datenübertragung in die USA wird dadurch auf Grundlage eines Angemessenheitsbeschlusses der EU-Kommission abgesichert.
+                      Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer sicheren und effizienten Bereitstellung unseres Internetangebots).
+                    </p>
+                    <p>
+                      Cloudflare ist zertifizierter Teilnehmer des EU-US Data Privacy Frameworks. Die Datenübertragung in die USA wird auf Grundlage eines Angemessenheitsbeschlusses der Europäischen Kommission (Art. 45 DSGVO) abgesichert. Weitere Informationen finden Sie in der Datenschutzerklärung von Cloudflare: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">https://www.cloudflare.com/privacypolicy/</a>.
                     </p>
 
-                    <h4>3. Allgemeine Hinweise und Pflichtinformationen</h4>
+                    <h4>4. Allgemeine Hinweise und Pflichtinformationen</h4>
                     <p><strong>Widerruf Ihrer Einwilligung zur Datenverarbeitung</strong></p>
                     <p>
-                      Viele Datenverarbeitungsvorgänge sind nur mit Ihrer ausdrücklichen Einwilligung möglich. Sie können eine bereits erteilte Einwilligung jederzeit widerrufen. Dazu reicht eine formlose Mitteilung per E-Mail an uns. Die Rechtmäßigkeit der bis zum Widerruf erfolgten Datenverarbeitung bleibt vom Widerruf unberührt.
+                      Viele Datenverarbeitungsvorgänge sind nur mit Ihrer ausdrücklichen Einwilligung möglich. Sie können eine bereits erteilte Einwilligung jederzeit widerrufen. Die Rechtmäßigkeit der bis zum Widerruf erfolgten Datenverarbeitung bleibt vom Widerruf unberührt. Dazu reicht eine formlose Mitteilung per E-Mail an Info@nienburger-nachtwaechter.de.
+                    </p>
+                    <p><strong>Widerspruchsrecht gegen die Datenerhebung in besonderen Fällen (Art. 21 DSGVO)</strong></p>
+                    <p>
+                      Wenn die Datenverarbeitung auf Grundlage von Art. 6 Abs. 1 lit. e oder f DSGVO erfolgt, haben Sie jederzeit das Recht, aus Gründen, die sich aus Ihrer besonderen Situation ergeben, gegen die Verarbeitung Ihrer personenbezogenen Daten Widerspruch einzulegen. Die jeweilige Rechtsgrundlage, auf der eine Verarbeitung beruht, entnehmen Sie dieser Datenschutzerklärung. Wenn Sie Widerspruch einlegen, werden wir Ihre betroffenen personenbezogenen Daten nicht mehr verarbeiten, es sei denn, wir können zwingende schutzwürdige Gründe für die Verarbeitung nachweisen, die Ihre Interessen, Rechte und Freiheiten überwiegen, oder die Verarbeitung dient der Geltendmachung, Ausübung oder Verteidigung von Rechtsansprüchen.
                     </p>
                     <p><strong>Beschwerderecht bei der zuständigen Aufsichtsbehörde</strong></p>
                     <p>
-                      Im Falle von Verstößen gegen die DSGVO steht den Betroffenen ein Beschwerderecht bei einer Aufsichtsbehörde, insbesondere in dem Mitgliedstaat ihres üblichen Aufenthaltsorts, ihres Arbeitsplatzes oder des Orts des mutmaßlichen Verstoßes zu. Das Beschwerderecht besteht unbeschadet anderweitiger verwaltungsrechtlicher oder gerichtlicher Rechtsbehelfe.
+                      Im Falle von Verstößen gegen die DSGVO steht den Betroffenen ein Beschwerderecht bei einer Aufsichtsbehörde zu, insbesondere in dem Mitgliedstaat ihres gewöhnlichen Aufenthaltsorts, ihres Arbeitsplatzes oder des Orts des mutmaßlichen Verstoßes. Das Beschwerderecht besteht unbeschadet anderweitiger verwaltungsrechtlicher oder gerichtlicher Rechtsbehelfe. Die für uns zuständige Aufsichtsbehörde ist: Die Landesbeauftragte für den Datenschutz Niedersachsen, Prinzenstraße 5, 30159 Hannover.
                     </p>
                     <p><strong>Recht auf Datenübertragbarkeit</strong></p>
                     <p>
@@ -1974,31 +1998,185 @@ export default function App() {
                     <p>
                       Sie haben im Rahmen der geltenden gesetzlichen Bestimmungen jederzeit das Recht auf unentgeltliche Auskunft über Ihre gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger und den Zweck der Datenverarbeitung und ggf. ein Recht auf Berichtigung oder Löschung dieser Daten. Hierzu sowie zu weiteren Fragen zum Thema personenbezogene Daten können Sie sich jederzeit an uns wenden.
                     </p>
-
-                    <h4>4. Datenerfassung und Dienste auf dieser Website</h4>
-                    <p><strong>Buchungsanfragen (Vertragsanbahnung)</strong></p>
+                    <p><strong>Recht auf Einschränkung der Verarbeitung</strong></p>
                     <p>
-                      Wenn Sie uns über unser Online-Formular eine Buchungsanfrage zukommen lassen, werden Ihre Angaben aus dem Formular inklusive der von Ihnen dort angegebenen Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.
+                      Sie haben das Recht, die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen. Hierzu können Sie sich jederzeit an uns wenden. Das Recht auf Einschränkung der Verarbeitung besteht in folgenden Fällen: Wenn Sie die Richtigkeit Ihrer bei uns gespeicherten personenbezogenen Daten bestreiten, benötigen wir in der Regel Zeit, um dies zu überprüfen. Für die Dauer der Prüfung haben Sie das Recht, die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen. Wenn die Verarbeitung Ihrer personenbezogenen Daten unrechtmäßig geschah/geschieht, können Sie statt der Löschung die Einschränkung der Datenverarbeitung verlangen. Wenn wir Ihre personenbezogenen Daten nicht mehr benötigen, Sie sie jedoch zur Ausübung, Verteidigung oder Geltendmachung von Rechtsansprüchen benötigen, haben Sie das Recht, statt der Löschung die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen. Wenn Sie einen Widerspruch nach Art. 21 Abs. 1 DSGVO eingelegt haben, muss eine Abwägung zwischen Ihren und unseren Interessen vorgenommen werden. Solange noch nicht feststeht, wessen Interessen überwiegen, haben Sie das Recht, die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen.
+                    </p>
+                    <p><strong>SSL- bzw. TLS-Verschlüsselung</strong></p>
+                    <p>
+                      Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte, wie zum Beispiel Buchungsanfragen, die Sie an uns als Seitenbetreiber senden, eine SSL- bzw. TLS-Verschlüsselung. Eine verschlüsselte Verbindung erkennen Sie daran, dass die Adresszeile des Browsers von „http://" auf „https://" wechselt und an dem Schloss-Symbol in Ihrer Browserzeile. Wenn die SSL- bzw. TLS-Verschlüsselung aktiviert ist, können die Daten, die Sie an uns übermitteln, nicht von Dritten mitgelesen werden.
+                    </p>
+
+                    <h4>5. Datenerfassung auf dieser Website</h4>
+                    <p><strong>Cookies und Cookie-Consent-Tool</strong></p>
+                    <p>
+                      Diese Website verwendet Cookies. Cookies sind kleine Textdateien, die auf Ihrem Endgerät gespeichert werden und die Ihr Browser speichert. Die meisten der von uns verwendeten Cookies sind sogenannte „Session-Cookies". Sie werden nach Ende Ihres Besuchs automatisch gelöscht. Andere Cookies bleiben auf Ihrem Endgerät gespeichert, bis Sie diese löschen. Diese Cookies ermöglichen es uns, Ihren Browser beim nächsten Besuch wiederzuerkennen.
+                    </p>
+                    <p>
+                      Zum Einholen und Verwalten Ihrer Cookie-Einwilligung setzen wir ein Consent-Tool ein, das als Skript über die Domain autumn-flower-76fa.friese-scholz.workers.dev eingebunden wird. Dieses Tool zeigt Ihnen beim ersten Besuch einen Cookie-Banner an, über den Sie Ihre Einwilligung zur Nutzung bestimmter Cookies und Dienste erteilen oder verweigern können. Ihre Einwilligung wird gespeichert, damit die Abfrage nicht bei jedem Seitenaufruf erneut erfolgen muss. Rechtsgrundlage ist Art. 6 Abs. 1 lit. c DSGVO (rechtliche Verpflichtung) in Verbindung mit § 25 TDDDG.
+                    </p>
+                    <p>
+                      Sie können Ihren Browser so einstellen, dass Sie über das Setzen von Cookies informiert werden und Cookies nur im Einzelfall erlauben, die Annahme von Cookies für bestimmte Fälle oder generell ausschließen sowie das automatische Löschen der Cookies beim Schließen des Browsers aktivieren. Bei der Deaktivierung von Cookies kann die Funktionalität dieser Website eingeschränkt sein.
+                    </p>
+                    <p><strong>Server-Log-Files</strong></p>
+                    <p>
+                      Der Provider der Seiten (Cloudflare) erhebt und speichert automatisch Informationen in sogenannten Server-Log-Files, die Ihr Browser automatisch an uns übermittelt. Dies sind: Browsertyp und Browserversion, verwendetes Betriebssystem, Referrer URL, Hostname des zugreifenden Rechners, Uhrzeit der Serveranfrage und IP-Adresse. Eine Zusammenführung dieser Daten mit anderen Datenquellen wird nicht vorgenommen. Die Erfassung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Der Websitebetreiber hat ein berechtigtes Interesse an der technisch fehlerfreien Darstellung und der Optimierung seiner Website – hierzu müssen die Server-Log-Files erfasst werden.
+                    </p>
+
+                    <h4>6. Buchungsanfragen (Vertragsanbahnung)</h4>
+                    <p>
+                      Wenn Sie uns über unser Online-Buchungsformular eine Anfrage zukommen lassen, werden Ihre Angaben aus dem Formular inklusive der von Ihnen dort angegebenen Kontaktdaten (Name, E-Mail-Adresse, Telefonnummer, Wunschtermin, Gruppengröße und optionale Nachricht) zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.
                     </p>
                     <p>
                       Die Verarbeitung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO, sofern Ihre Anfrage mit der Erfüllung eines Vertrags zusammenhängt oder zur Durchführung vorvertraglicher Maßnahmen erforderlich ist. In allen übrigen Fällen beruht die Verarbeitung auf unserem berechtigten Interesse an der effektiven Bearbeitung der an uns gerichteten Anfragen (Art. 6 Abs. 1 lit. f DSGVO).
                     </p>
                     <p>
-                      Die von Ihnen im Buchungsformular eingegebenen Daten verbleiben bei uns, bis Sie uns zur Löschung auffordern, Ihre Einwilligung zur Speicherung widerrufen oder der Zweck für die Datenspeicherung entfällt (z. B. nach abgeschlossener Bearbeitung Ihrer Anfrage). Zwingende gesetzliche Bestimmungen – insbesondere Aufbewahrungsfristen – bleiben unberührt.
+                      Die von Ihnen im Buchungsformular eingegebenen Daten verbleiben bei uns, bis Sie uns zur Löschung auffordern, Ihre Einwilligung zur Speicherung widerrufen oder der Zweck für die Datenspeicherung entfällt (z.&nbsp;B. nach abgeschlossener Bearbeitung Ihrer Anfrage). Zwingende gesetzliche Bestimmungen – insbesondere Aufbewahrungsfristen – bleiben unberührt.
                     </p>
-                    <p><strong>E-Mail-Versand via Resend</strong></p>
+
+                    <h4>7. E-Mail-Versand via Resend</h4>
                     <p>
-                      Für die Zustellung der Buchungs-E-Mails nutzen wir den E-Mail-Zustelldienst Resend (Resend Inc., 228 Park Ave S, PMB 99625, New York, NY 10003, USA).
-                    </p>
-                    <p>
-                      Die Daten aus der Buchungsmaske werden verschlüsselt an die API von Resend übertragen, die die E-Mail zuverlässig an unsere E-Mail-Adresse versendet. Die Nutzung des Dienstes dient der Gewährleistung einer technisch stabilen E-Mail-Zustellung. Dies stellt ein berechtigtes Interesse gemäß Art. 6 Abs. 1 lit. f DSGVO dar.
-                    </p>
-                    <p><strong>Cloudflare Turnstile (Spam-Schutz)</strong></p>
-                    <p>
-                      Wir nutzen auf unserer Website den Spam-Schutz-Dienst Cloudflare Turnstile. Anbieter ist ebenfalls Cloudflare, Inc. (USA).
+                      Für die technische Zustellung der aus dem Buchungsformular generierten E-Mails nutzen wir den Dienst Resend (Resend Inc., 228 Park Ave S, PMB 99625, New York, NY 10003, USA). Bei Absenden des Buchungsformulars werden Ihre eingegebenen Daten verschlüsselt über eine API an Resend übertragen. Resend stellt die E-Mail anschließend an unsere E-Mail-Adresse zu.
                     </p>
                     <p>
-                      Turnstile dient der Prüfung, ob die Eingaben im Buchungsformular durch einen menschlichen Nutzer oder durch ein automatisiertes Skript/Bot erfolgen. Hierzu analysiert Turnstile das Verhalten des Besuchers anhand verschiedener Merkmale (z.B. IP-Adresse, Verweildauer auf der Website oder Mausbewegungen), ohne dass eine interaktive Captcha-Aufgabe gelöst werden muss. Die Auswertung läuft im Hintergrund. Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Unser berechtigtes Interesse liegt in der Abwehr von Spam, betrügerischen Nachrichten und Denial-of-Service-Angriffen.
+                      Die Nutzung von Resend erfolgt auf Grundlage unseres berechtigten Interesses an einer zuverlässigen und technisch stabilen E-Mail-Zustellung (Art. 6 Abs. 1 lit. f DSGVO). Es findet eine Datenübermittlung in die USA statt. Resend hat sich dem EU-US Data Privacy Framework angeschlossen. Weitere Informationen: <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">https://resend.com/legal/privacy-policy</a>.
+                    </p>
+
+                    <h4>8. Cloudflare Turnstile (Spam-Schutz)</h4>
+                    <p>
+                      Wir nutzen auf unserer Website den Spam-Schutz-Dienst Cloudflare Turnstile der Cloudflare, Inc. (USA). Turnstile dient der Prüfung, ob Eingaben in unser Buchungsformular durch einen menschlichen Nutzer oder durch ein automatisiertes Skript (Bot) erfolgen.
+                    </p>
+                    <p>
+                      Hierzu analysiert Turnstile das Verhalten des Besuchers anhand verschiedener Merkmale (z.&nbsp;B. IP-Adresse, Verweildauer auf der Website, Mausbewegungen), ohne dass eine interaktive Captcha-Aufgabe gelöst werden muss. Die Auswertung läuft vollständig im Hintergrund. Im Rahmen der Analyse können Cookies gesetzt und technische Daten (einschließlich der IP-Adresse) an Cloudflare übermittelt werden.
+                    </p>
+                    <p>
+                      Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Unser berechtigtes Interesse liegt im Schutz unserer Website vor missbräuchlichem automatisiertem Zugriff, Spam und Denial-of-Service-Angriffen. Weitere Informationen: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">https://www.cloudflare.com/privacypolicy/</a>.
+                    </p>
+
+                    <h4>9. Google Fonts</h4>
+                    <p>
+                      Diese Website nutzt zur einheitlichen Darstellung von Schriftarten sogenannte Google Fonts, die von Google bereitgestellt werden. Anbieter ist die Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland.
+                    </p>
+                    <p>
+                      Die Google Fonts werden über die Server von Google (fonts.googleapis.com und fonts.gstatic.com) geladen. Beim Aufruf einer Seite lädt Ihr Browser die benötigten Schriften direkt von Google. Dabei wird Ihre IP-Adresse an Google übermittelt. Dies stellt ein berechtigtes Interesse im Sinne von Art. 6 Abs. 1 lit. f DSGVO dar, da eine einheitliche und ansprechende Darstellung unserer Website erforderlich ist.
+                    </p>
+                    <p>
+                      Google ist zertifizierter Teilnehmer des EU-US Data Privacy Frameworks. Weitere Informationen zum Umgang mit Nutzerdaten finden Sie in der Datenschutzerklärung von Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">https://policies.google.com/privacy</a>.
+                    </p>
+
+                    <h4>10. Google Analytics</h4>
+                    <p>
+                      Diese Website nutzt Funktionen des Webanalysedienstes Google Analytics. Anbieter ist die Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland.
+                    </p>
+                    <p>
+                      Google Analytics ermöglicht es dem Websitebetreiber, das Verhalten der Websitebesucher zu analysieren. Hierbei erhält der Websitebetreiber verschiedene Nutzungsdaten, wie z.&nbsp;B. Seitenaufrufe, Verweildauer, verwendete Betriebssysteme und Herkunft des Nutzers. Diese Daten werden unter Umständen von Google in einem Profil zusammengefasst, das dem jeweiligen Nutzer bzw. dessen Endgerät zugeordnet ist.
+                    </p>
+                    <p>
+                      Google Analytics verwendet Technologien, die die Wiedererkennung des Nutzers zum Zwecke der Analyse des Nutzerverhaltens ermöglichen (z.&nbsp;B. Cookies oder Device-Fingerprinting). Die von Google erfassten Informationen über die Benutzung dieser Website werden in der Regel an einen Server von Google in den USA übertragen und dort gespeichert. Google ist zertifizierter Teilnehmer des EU-US Data Privacy Frameworks.
+                    </p>
+                    <p>
+                      Die Nutzung dieses Dienstes erfolgt auf Grundlage Ihrer Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO bzw. § 25 Abs. 1 TDDDG. Die Einwilligung ist jederzeit über unseren Cookie-Banner widerrufbar.
+                    </p>
+                    <p>
+                      Weitere Informationen zum Umgang mit Nutzerdaten bei Google Analytics finden Sie in der Datenschutzerklärung von Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">https://policies.google.com/privacy</a>.
+                    </p>
+
+                    <h4>11. Google Bewertungen / Google Business Profile</h4>
+                    <p>
+                      Auf unserer Website binden wir Bewertungen aus unserem Google Business Profile ein. Anbieter ist die Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland.
+                    </p>
+                    <p>
+                      Beim Laden der Bewertungsinhalte wird eine Verbindung zu den Servern von Google aufgebaut. Dabei kann Ihre IP-Adresse an Google übermittelt werden. Zudem können von Google Cookies auf Ihrem Endgerät gespeichert werden. Die Einbindung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer vertrauenswürdigen Darstellung von Kundenbewertungen) bzw. auf Grundlage Ihrer Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO, sofern diese über unseren Cookie-Banner eingeholt wurde.
+                    </p>
+                    <p>
+                      Google ist zertifizierter Teilnehmer des EU-US Data Privacy Frameworks. Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">https://policies.google.com/privacy</a>.
+                    </p>
+
+                    <h4>12. Cloudflare R2 (Medien-Hosting)</h4>
+                    <p>
+                      Für die Bereitstellung von Bildern und Mediendateien nutzen wir den Speicherdienst Cloudflare R2 der Cloudflare, Inc. (USA). Die Medieninhalte werden über die Domain pub-b33108412309406a9a941ddc51e9a5b9.r2.dev ausgeliefert.
+                    </p>
+                    <p>
+                      Beim Laden einer Seite mit eingebundenen Medien stellt Ihr Browser eine Verbindung zu den Servern von Cloudflare R2 her. Dabei wird Ihre IP-Adresse an Cloudflare übermittelt. Die Nutzung erfolgt auf Grundlage unseres berechtigten Interesses an einer effizienten und performanten Auslieferung von Medieninhalten (Art. 6 Abs. 1 lit. f DSGVO).
+                    </p>
+                    <p>
+                      Cloudflare ist zertifizierter Teilnehmer des EU-US Data Privacy Frameworks. Weitere Informationen: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">https://www.cloudflare.com/privacypolicy/</a>.
+                    </p>
+
+                    <h4>13. Änderung dieser Datenschutzerklärung</h4>
+                    <p>
+                      Wir behalten uns vor, diese Datenschutzerklärung anzupassen, damit sie stets den aktuellen rechtlichen Anforderungen entspricht oder um Änderungen unserer Leistungen in der Datenschutzerklärung umzusetzen, z.&nbsp;B. bei der Einführung neuer Services. Für Ihren erneuten Besuch gilt dann die neue Datenschutzerklärung.
+                    </p>
+                    <p>
+                      <strong>Stand dieser Datenschutzerklärung:</strong> Juli 2025
+                    </p>
+                  </div>
+                )}
+
+                {activeModal === 'barrierefreiheit' && (
+                  <div>
+                    <h4>Barrierefreiheitserklärung</h4>
+                    <p>
+                      Stefan Hilker (Stephan van Hausen als Nienburger Nachtwächter) ist bemüht, die Website nienburger-nachtwaechter.de im Einklang mit den nationalen Rechtsvorschriften zur Umsetzung der Richtlinie (EU) 2016/2102 des Europäischen Parlaments und des Rates barrierefrei zugänglich zu machen.
+                    </p>
+
+                    <h4>Geltungsbereich</h4>
+                    <p>
+                      Diese Barrierefreiheitserklärung gilt für die öffentlich zugängliche Website unter der Domain nienburger-nachtwaechter.de.
+                    </p>
+
+                    <h4>Konformitätsstatus</h4>
+                    <p>
+                      Diese Website ist <strong>teilweise konform</strong> mit den Web Content Accessibility Guidelines (WCAG) 2.1 Level AA. Die Nichtkonformitäten und Ausnahmen sind nachstehend aufgeführt.
+                    </p>
+
+                    <h4>Nicht barrierefreie Inhalte</h4>
+                    <p>Die nachfolgend aufgeführten Inhalte sind aus den genannten Gründen nicht vollständig barrierefrei:</p>
+                    <p><strong>Unvereinbarkeit mit WCAG 2.1 Level AA:</strong></p>
+                    <p>
+                      • Einige Bilder verfügen möglicherweise nicht über ausreichende Alternativtexte (WCAG 1.1.1).<br />
+                      • Einzelne Farbkontraste erreichen unter Umständen nicht die erforderlichen Mindest-Kontrastverhältnisse gemäß WCAG 1.4.3.<br />
+                      • Eingebundene Drittanbieter-Inhalte (z.&nbsp;B. Google-Bewertungen, Cloudflare Turnstile) unterliegen nicht unserer vollständigen Kontrolle hinsichtlich der Barrierefreiheit.<br />
+                      • Sollten PDF-Dokumente zum Download angeboten werden, können diese möglicherweise nicht vollständig barrierefrei aufbereitet sein.
+                    </p>
+                    <p>
+                      Wir arbeiten kontinuierlich daran, die Barrierefreiheit dieser Website zu verbessern.
+                    </p>
+
+                    <h4>Erstellung dieser Erklärung</h4>
+                    <p>
+                      Diese Erklärung wurde am 7. Juli 2025 erstellt. Die Einschätzung basiert auf einer Selbstbewertung.
+                    </p>
+
+                    <h4>Feedback und Kontaktangaben</h4>
+                    <p>
+                      Wenn Ihnen Mängel in Bezug auf die barrierefreie Gestaltung dieser Website auffallen, können Sie sich gerne an uns wenden:
+                    </p>
+                    <p style={{ paddingLeft: '16px', borderLeft: '2px solid var(--accent)' }}>
+                      Stefan Hilker<br />
+                      Stephan van Hausen als Nienburger Nachtwächter<br />
+                      Im Osterfeld 44<br />
+                      31632 Husum<br />
+                      Mobil: 0160 / 94813232<br />
+                      E-Mail: Info@nienburger-nachtwaechter.de
+                    </p>
+                    <p>
+                      Wir bemühen uns, jede Anfrage innerhalb einer angemessenen Frist zu bearbeiten.
+                    </p>
+
+                    <h4>Durchsetzungsverfahren</h4>
+                    <p>
+                      Sollten Sie der Meinung sein, durch eine nicht ausreichend barrierefreie Gestaltung unserer Website in Ihren Rechten beeinträchtigt zu sein, können Sie sich – nach einer erfolglosen Kontaktaufnahme mit uns – an die zuständige Durchsetzungsstelle wenden.
+                    </p>
+                    <p>
+                      In Niedersachsen ist die zuständige Schlichtungsstelle:<br />
+                      Schlichtungsstelle nach § 16 BGG<br />
+                      bei der Beauftragten der Bundesregierung für die Belange von Menschen mit Behinderungen<br />
+                      Mauerstraße 53<br />
+                      10117 Berlin<br />
+                      Telefon: 030 / 18 527-2805<br />
+                      E-Mail: info@schlichtungsstelle-bgg.de<br />
+                      Website: <a href="https://www.schlichtungsstelle-bgg.de" target="_blank" rel="noopener noreferrer">www.schlichtungsstelle-bgg.de</a>
                     </p>
                   </div>
                 )}
