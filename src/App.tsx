@@ -776,6 +776,21 @@ export default function App() {
           </svg>
         </div>
 
+        {/* Character cutout placed absolutely to overlay sections (Layer 2) */}
+        <motion.div 
+          className="hero-character-container"
+          initial={{ opacity: 0, y: 120 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number], delay: 0.2 }}
+        >
+          <img 
+            src={IMAGES.cutout} 
+            alt="Stephan van Hausen Nachtwächter" 
+            className="hero-character-img"
+          />
+        </motion.div>
+
+
         {/* Bottom Section containing buttons and detailed introductory text (Part B) */}
         <div className="hero-bottom-content">
           <div className="container">
@@ -813,19 +828,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Character cutout placed absolutely to overlay sections (Layer 2) */}
-        <motion.div 
-          className="hero-character-container"
-          initial={{ opacity: 0, y: 120 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number], delay: 0.2 }}
-        >
-          <img 
-            src={IMAGES.cutout} 
-            alt="Stephan van Hausen Nachtwächter" 
-            className="hero-character-img"
-          />
-        </motion.div>
 
         {/* Simple, performance-friendly static dark-bluish fog overlay clouds */}
         <div className="simple-fog-container">
