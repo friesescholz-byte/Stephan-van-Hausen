@@ -761,7 +761,7 @@ export default function App() {
           </div>
           {/* Character cutout placed absolutely to overlay sections (Layer 2) */}
           <motion.div 
-            className="hero-character-container"
+            className="hero-character-container mobile-char-cutout"
             initial={{ opacity: 0, y: 120 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number], delay: 0.2 }}
@@ -822,6 +822,19 @@ export default function App() {
           </div>
         </div>
 
+        {/* Desktop character cutout */}
+        <motion.div 
+          className="hero-character-container desktop-char-cutout"
+          initial={{ opacity: 0, y: 120 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number], delay: 0.2 }}
+        >
+          <img 
+            src={IMAGES.cutout} 
+            alt="Stephan van Hausen Nachtwächter" 
+            className="hero-character-img"
+          />
+        </motion.div>
 
         {/* Simple, performance-friendly static dark-bluish fog overlay clouds */}
         <div className="simple-fog-container">
