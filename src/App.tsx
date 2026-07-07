@@ -723,19 +723,12 @@ export default function App() {
           </div>
 
           {/* Background image + light simulation of lantern (Layer 1) */}
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-            backgroundImage: `radial-gradient(circle at 75% 30%, rgba(217, 162, 74, 0.1) 0%, rgba(7, 9, 13, 0.3) 50%, rgba(7, 9, 13, 0.6) 100%), url(${IMAGES.heroBg})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center top',
-            backgroundAttachment: 'fixed',
-            pointerEvents: 'none',
-            zIndex: 1
-          }} />
+          <div 
+            className="hero-bg-image-overlay"
+            style={{
+              backgroundImage: `radial-gradient(circle at 75% 30%, rgba(217, 162, 74, 0.1) 0%, rgba(7, 9, 13, 0.3) 50%, rgba(7, 9, 13, 0.6) 100%), url(${IMAGES.heroBg})`,
+            }} 
+          />
 
           <div className="container" style={{ position: 'relative', zIndex: 10 }}>
             <div className="hero-top">

@@ -361,6 +361,20 @@ section {
   padding: 0; /* Overrides general section padding to let the background stretch to the very top */
 }
 
+.hero-bg-image-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  pointer-events: none;
+  z-index: 1;
+  background-color: #07090d; /* Fallback background color */
+}
+
 /* Top Banner (Part A) */
 .hero-top-banner {
   position: relative;
@@ -560,14 +574,20 @@ section {
     gap: 40px;
   }
   .hero-character-container {
-    position: relative;
-    right: auto;
-    bottom: auto;
-    width: 75%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -60px;
+    width: 80%;
     max-width: 320px;
     height: 380px;
-    margin: -110px auto 24px auto;
-    z-index: 25;
+    margin: 0;
+    z-index: 5;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .hero-bg-image-overlay {
+    background-attachment: scroll !important;
   }
   .hero-trust-wrapper {
     margin-top: 0;
@@ -1622,14 +1642,17 @@ input[type="range"]::-moz-range-thumb:hover {
     gap: 30px;
   }
   .hero-character-container {
-    position: relative;
-    right: auto;
-    bottom: auto;
-    width: 75%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -60px;
+    width: 80%;
     max-width: 320px;
     height: 380px;
-    margin: -110px auto 24px auto;
-    z-index: 25;
+    margin: 0;
+    z-index: 5;
+    opacity: 0.55;
+    pointer-events: none;
   }
   .erlebnis-grid, .nachtwaechter-grid, .eignung-grid, .buchung-wrapper {
     grid-template-columns: 1fr;
@@ -1676,6 +1699,14 @@ input[type="range"]::-moz-range-thumb:hover {
     outline: 1px solid rgba(255, 255, 255, 0.2);
     outline-offset: -3px;
   }
+  .btn-medieval-cta {
+    padding: 12px 20px;
+    font-size: 0.88rem;
+    max-width: 100%;
+    box-sizing: border-box;
+    white-space: normal;
+    text-align: center;
+  }
   .hero-top-banner {
     padding-top: 100px;
     padding-bottom: 120px;
@@ -1691,7 +1722,7 @@ input[type="range"]::-moz-range-thumb:hover {
     margin-bottom: 6px;
   }
   .hero-bottom-content {
-    padding: 60px 0 80px;
+    padding: 30px 0 45px;
   }
   .hero-quote {
     font-size: 1.2rem;
@@ -1729,8 +1760,10 @@ input[type="range"]::-moz-range-thumb:hover {
 
 @media (max-width: 600px) {
   .hero-character-container {
+    bottom: -45px;
     height: 310px;
-    margin: -75px auto 16px auto;
+    max-width: 260px;
+    opacity: 0.5;
   }
   .booking-options {
     grid-template-columns: 1fr;
