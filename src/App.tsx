@@ -98,7 +98,7 @@ export default function App() {
   // Booking states
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [currentCalendarMonth, setCurrentCalendarMonth] = useState(new Date(2026, 5, 1)); // June 2026
-  const [tourType, setTourType] = useState<'classic' | 'school'>('classic');
+  const [tourType, setTourType] = useState<'classic' | 'school' | 'public'>('classic');
   const [groupSize, setGroupSize] = useState<number>(10);
   const [selectedTime, setSelectedTime] = useState<string>("19:00");
   const [activeFormStep, setActiveFormStep] = useState<1 | 2 | 3>(1);
@@ -224,6 +224,9 @@ export default function App() {
 
   // Calculate pricing based on Scholz & Friese business logic
   const calculateTotalCost = () => {
+    if (tourType === 'public') {
+      return groupSize * 10;
+    }
     let base = tourType === 'classic' ? 120 : 70;
     let extra = 0;
     if (tourType === 'classic' && groupSize > 20) {
@@ -264,10 +267,13 @@ export default function App() {
       message: formData.message,
       date: formattedDate,
       time: selectedTime,
-      tourType: tourType === 'classic' ? 'Standard Nachtwächter-Führung' : 'Schulklasse / Jugendgruppe',
+      tourType: tourType === 'public' 
+        ? 'Öffentliche Nachtwächter-Führung' 
+        : (tourType === 'classic' ? 'Standard Nachtwächter-Führung' : 'Schulklasse / Jugendgruppe'),
       groupSize,
       gewandZuschlag: false,
-      cost: calculateTotalCost()
+      cost: calculateTotalCost(),
+      isPublic: tourType === 'public'
     };
 
     try {
@@ -359,6 +365,12 @@ export default function App() {
     return blockedDates.includes(dateStr);
   };
 
+  const isFirstOrThirdFriday = (date: Date) => {
+    if (date.getDay() !== 5) return false;
+    const day = date.getDate();
+    return (day >= 1 && day <= 7) || (day >= 15 && day <= 21);
+  };
+
   const isDayDisabled = (dayNum: number | null) => {
     if (!dayNum) return true;
     const dateToCheck = new Date(
@@ -368,6 +380,9 @@ export default function App() {
     );
     const today = new Date(2026, 5, 2); // Set reference system date June 2, 2026
     if (dateToCheck < today) return true;
+    if (tourType === 'public') {
+      return !isFirstOrThirdFriday(dateToCheck) || isDayBlocked(dateToCheck);
+    }
     return isDayBlocked(dateToCheck);
   };
 
@@ -783,7 +798,10 @@ export default function App() {
                       <Check size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} /> <span><strong>Historischer Rundgang:</strong> Mit Hellebarde, Horn und Laterne.</span>
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Check size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} /> <span><strong>Spannendes Erlebnis:</strong> Für Vereine, Schulklassen & Privatgruppen.</span>
+                      <Check size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} /> <span><strong>Öffentliche Führung:</strong> Jeden 1. &amp; 3. Freitag im Monat um 18:00 Uhr (10€ p.P. / Treffpunkt: Lange Str., Höhe Cup&Cino).</span>
+                    </li>
+                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Check size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} /> <span><strong>Spannendes Erlebnis:</strong> Für Vereine, Schulklassen &amp; Privatgruppen.</span>
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <Check size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} /> <span><strong>Spürbare Geschichte:</strong> Nienburgs Mythen live erleben.</span>
@@ -1117,19 +1135,25 @@ export default function App() {
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
                   <span style={{ color: 'var(--accent)', fontSize: '1.25rem', fontWeight: 'bold', lineHeight: '1' }}>✦</span>
                   <div className="section-text">
-                    <strong style={{ color: 'var(--text-main)' }}>Firmenfeiern & Vereinsausflüge:</strong> Teambuilding der besonderen Art. Teilt Geschichten, lacht gemeinsam und erlebt einen unvergesslichen Abend.
+                    <strong style={{ color: 'var(--text-main)' }}>Firmenfeiern &amp; Vereinsausflüge:</strong> Teambuilding der besonderen Art. Teilt Geschichten, lacht gemeinsam und erlebt einen unvergesslichen Abend.
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
                   <span style={{ color: 'var(--accent)', fontSize: '1.25rem', fontWeight: 'bold', lineHeight: '1' }}>✦</span>
                   <div className="section-text">
-                    <strong style={{ color: 'var(--text-main)' }}>Geburtstage & Familienfeste:</strong> Verschenke eine Zeitreise! Ein origineller Programmpunkt, der alle Generationen verbindet.
+                    <strong style={{ color: 'var(--text-main)' }}>Einzelpersonen &amp; Kleingruppen (Öffentliche Führung):</strong> Jeden 1. und 3. Freitag im Monat um 18:00 Uhr. Keine Voranmeldung nötig (oder einfach online Plätze sichern). Bezahlung bar vor Ort (10€ p.P.).
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
                   <span style={{ color: 'var(--accent)', fontSize: '1.25rem', fontWeight: 'bold', lineHeight: '1' }}>✦</span>
                   <div className="section-text">
-                    <strong style={{ color: 'var(--text-main)' }}>Schulklassen & Jugendgruppen:</strong> Geschichte zum Anfassen. Pädagogisch wertvoll, spannend inszeniert und absolut jugendgerecht.
+                    <strong style={{ color: 'var(--text-main)' }}>Geburtstage &amp; Familienfeste:</strong> Verschenke eine Zeitreise! Ein origineller Programmpunkt, der alle Generationen verbindet.
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
+                  <span style={{ color: 'var(--accent)', fontSize: '1.25rem', fontWeight: 'bold', lineHeight: '1' }}>✦</span>
+                  <div className="section-text">
+                    <strong style={{ color: 'var(--text-main)' }}>Schulklassen &amp; Jugendgruppen:</strong> Geschichte zum Anfassen. Pädagogisch wertvoll, spannend inszeniert und absolut jugendgerecht.
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
@@ -1259,10 +1283,10 @@ export default function App() {
                     <span style={{ color: 'var(--accent)' }}>•</span> <span><strong>Dauer:</strong> Ca. 1,5 bis 2 Stunden voller Geschichte.</span>
                   </li>
                   <li style={{ display: 'flex', gap: '10px', fontSize: '0.95rem' }} className="section-text">
-                    <span style={{ color: 'var(--accent)' }}>•</span> <span><strong>Wunschtermin:</strong> Wunschtag im Kalender anfragen.</span>
+                    <span style={{ color: 'var(--accent)' }}>•</span> <span><strong>Treffpunkt:</strong> Lange Straße, Höhe Cup&amp;Cino.</span>
                   </li>
                   <li style={{ display: 'flex', gap: '10px', fontSize: '0.95rem' }} className="section-text">
-                    <span style={{ color: 'var(--accent)' }}>•</span> <span><strong>Gruppe:</strong> Bis 20 Personen zum günstigen Pauschalpreis.</span>
+                    <span style={{ color: 'var(--accent)' }}>•</span> <span><strong>Wunschtermin:</strong> Wunschtag im Kalender anfragen.</span>
                   </li>
                   <li style={{ display: 'flex', gap: '10px', fontSize: '0.95rem' }} className="section-text">
                     <span style={{ color: 'var(--accent)' }}>•</span> <span><strong>Wetterfest:</strong> Findet bei jeder Witterung statt.</span>
@@ -1271,11 +1295,15 @@ export default function App() {
               </div>
 
               <div className="preis-card">
-                <h3>Preise & Konditionen</h3>
+                <h3>Preise &amp; Konditionen</h3>
                 <ul className="preis-list">
                   <li className="preis-item">
                     <span className="preis-item-title">Dauer</span>
                     <span className="preis-item-val">ca. 1,5 – 2 Std.</span>
+                  </li>
+                  <li className="preis-item" style={{ borderLeft: '3px solid var(--accent)', paddingLeft: '10px', backgroundColor: 'rgba(217, 162, 74, 0.05)' }}>
+                    <span className="preis-item-title" style={{ fontWeight: 700, color: 'var(--text-main)' }}>Öffentliche Führung (Jeden 1. &amp; 3. Fr., 18 Uhr)</span>
+                    <span className="preis-item-val" style={{ fontWeight: 700, color: 'var(--accent)' }}>10,00 € p.P.</span>
                   </li>
                   <li className="preis-item">
                     <span className="preis-item-title">Gruppe (bis max. 20 Personen)</span>
@@ -1286,7 +1314,7 @@ export default function App() {
                     <span className="preis-item-val">+ 5,00 €</span>
                   </li>
                   <li className="preis-item">
-                    <span className="preis-item-title">Schulklassen & Kindergruppen</span>
+                    <span className="preis-item-title">Schulklassen &amp; Kindergruppen</span>
                     <span className="preis-item-val">70,00 € (Pauschal)</span>
                   </li>
                   <li className="preis-item">
@@ -1295,7 +1323,7 @@ export default function App() {
                   </li>
                 </ul>
                 <p className="preis-hinweis">
-                  * Alle Preise verstehen sich als unverbindliche Richtwerte. Bitte lassen Sie sich diese vor der finalen Buchung aktuell bestätigen.
+                  * Bezahlung bei der öffentlichen Führung erfolgt vor Ort in bar. Alle Preise sind unverbindliche Richtwerte.
                 </p>
               </div>
             </div>
@@ -1310,10 +1338,12 @@ export default function App() {
                 <div className="status-alert success" style={{ padding: '30px 20px', flexDirection: 'column' }}>
                   <Check size={48} strokeWidth={2.5} style={{ marginBottom: '16px' }} />
                   <h4 style={{ color: '#10b981', fontFamily: 'var(--font-sans)', fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>
-                    Anfrage erfolgreich gesendet!
+                    {tourType === 'public' ? 'Erfolgreich angemeldet!' : 'Anfrage erfolgreich gesendet!'}
                   </h4>
                   <p style={{ color: '#6ee7b7', fontSize: '0.9rem', textAlign: 'center' }}>
-                    Vielen Dank für Ihre Anfrage. Wir prüfen Ihren Wunschtermin und melden uns schnellstmöglich bei Ihnen zurück.
+                    {tourType === 'public' 
+                      ? 'Vielen Dank für Ihre Anmeldung zur öffentlichen Führung! Eine Bestätigungs-E-Mail mit allen Details wurde an Sie gesendet. Die Bezahlung erfolgt vor Ort.' 
+                      : 'Vielen Dank für Ihre Anfrage. Wir prüfen Ihren Wunschtermin und melden uns schnellstmöglich bei Ihnen zurück.'}
                   </p>
                   <button className="btn btn-primary" style={{ marginTop: '24px' }} onClick={() => setFormStatus('idle')}>
                     Weitere Anfrage stellen
@@ -1380,11 +1410,16 @@ export default function App() {
                               {generateCalendarDays().map((dayObj, index) => {
                                 const isSel = dayObj.dayNumber ? isDaySelected(dayObj.dayNumber) : false;
                                 const isDis = dayObj.dayNumber ? isDayDisabled(dayObj.dayNumber) : true;
+                                const isPublicFriday = dayObj.dayNumber ? isFirstOrThirdFriday(new Date(
+                                  currentCalendarMonth.getFullYear(),
+                                  currentCalendarMonth.getMonth(),
+                                  dayObj.dayNumber
+                                )) : false;
                                 
                                 return (
                                   <div 
                                     key={index} 
-                                    className={`calendar-day ${dayObj.dayNumber === null ? 'empty' : ''} ${isSel ? 'selected' : ''} ${isDis && dayObj.dayNumber !== null ? 'disabled' : ''}`}
+                                    className={`calendar-day ${dayObj.dayNumber === null ? 'empty' : ''} ${isSel ? 'selected' : ''} ${isDis && dayObj.dayNumber !== null ? 'disabled' : ''} ${isPublicFriday && dayObj.dayNumber !== null ? 'public-tour-day' : ''}`}
                                     onClick={() => handleDayClick(dayObj.dayNumber)}
                                   >
                                     {dayObj.dayNumber}
@@ -1392,6 +1427,19 @@ export default function App() {
                                 );
                               })}
                             </div>
+                            
+                            {/* Calendar Legend */}
+                            <div style={{ marginTop: '12px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '16px', fontSize: '0.75rem', color: 'var(--text-cream)', opacity: 0.85 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span style={{ display: 'inline-block', width: '10px', height: '10px', backgroundColor: 'var(--accent)', borderRadius: '50%' }}></span>
+                                <span>Ausgewählt</span>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span style={{ display: 'inline-block', width: '10px', height: '10px', border: '1px dashed var(--accent)', borderRadius: '2px' }}></span>
+                                <span>Öffentliche Führung (10€)</span>
+                              </div>
+                            </div>
+
                             {selectedDate && (
                               <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                 <div className="status-alert info" style={{ margin: 0, fontSize: '0.85rem' }}>
@@ -1407,11 +1455,17 @@ export default function App() {
                                     id="inputTime"
                                     type="time" 
                                     required
+                                    disabled={tourType === 'public'}
                                     className="form-control"
-                                    style={{ width: '100%', cursor: 'pointer' }}
+                                    style={{ width: '100%', cursor: tourType === 'public' ? 'not-allowed' : 'pointer', opacity: tourType === 'public' ? 0.7 : 1 }}
                                     value={selectedTime}
                                     onChange={(e) => setSelectedTime(e.target.value)}
                                   />
+                                  {tourType === 'public' && (
+                                    <span style={{ fontSize: '0.72rem', color: 'var(--accent)', marginTop: '4px', display: 'block', fontWeight: 500 }}>
+                                      * Öffentliche Führungen starten fest um 18:00 Uhr.
+                                    </span>
+                                  )}
                                 </div>
                               </div>
                             )}
@@ -1425,34 +1479,53 @@ export default function App() {
                           <div className="booking-options">
                             <div 
                               className={`booking-option-card ${tourType === 'classic' ? 'selected' : ''}`}
-                              onClick={() => setTourType('classic')}
+                              onClick={() => {
+                                setTourType('classic');
+                              }}
                             >
                               <h5>Standard-Führung</h5>
-                              <p>Für Vereine, Firmen &amp; Privatgruppen bis 20 Pers. Base: 120€</p>
+                              <p>Vereine, Firmen &amp; Privatgruppen bis 20 Pers. Base: 120€</p>
                             </div>
                             <div 
                               className={`booking-option-card ${tourType === 'school' ? 'selected' : ''}`}
-                              onClick={() => setTourType('school')}
+                              onClick={() => {
+                                setTourType('school');
+                              }}
                             >
                               <h5>Schulklasse / Jugend</h5>
                               <p>Flache Pauschale für Schulklassen &amp; Kinder. Flat: 70€</p>
                             </div>
+                            <div 
+                              className={`booking-option-card ${tourType === 'public' ? 'selected' : ''}`}
+                              onClick={() => {
+                                setTourType('public');
+                                setSelectedTime('18:00');
+                                if (selectedDate && !isFirstOrThirdFriday(selectedDate)) {
+                                  setSelectedDate(null);
+                                }
+                              }}
+                            >
+                              <h5>Öffentliche Führung</h5>
+                              <p>Jeden 1. &amp; 3. Fr. im Monat um 18:00 Uhr. 10€ p.P. (bar vor Ort)</p>
+                            </div>
                           </div>
 
-                          {tourType === 'classic' && (
+                          {tourType !== 'school' && (
                             <div className="form-group" style={{ marginBottom: '20px' }}>
                               <label htmlFor="groupSizeRange">Teilnehmeranzahl: {groupSize} Personen</label>
                               <input 
                                 id="groupSizeRange"
                                 type="range" 
                                 min="1" 
-                                max="40" 
+                                max={tourType === 'public' ? '15' : '40'} 
                                 value={groupSize} 
                                 onChange={(e) => setGroupSize(parseInt(e.target.value))}
                                 style={{ width: '100%', accentColor: 'var(--accent)' }}
                               />
                               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                                * Bis 20 Personen 120€ pauschal. Jede weitere Person zusätzlich +5€
+                                {tourType === 'public' 
+                                  ? '* 10,- € pro Person, Bezahlung erfolgt vor Ort in bar.' 
+                                  : '* Bis 20 Personen 120€ pauschal. Jede weitere Person zusätzlich +5€'}
                               </span>
                             </div>
                           )}
@@ -1618,20 +1691,34 @@ export default function App() {
                               </div>
                               <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
                                 <span>Führungstyp:</span>
-                                <span>{tourType === 'classic' ? 'Standard-Führung' : 'Schulklasse / Jugend'}</span>
+                                <span>
+                                  {tourType === 'public' 
+                                    ? 'Öffentliche Führung' 
+                                    : (tourType === 'classic' ? 'Standard-Führung' : 'Schulklasse / Jugend')}
+                                </span>
                               </div>
-                              {tourType === 'classic' && (
+                              {tourType !== 'school' && (
                                 <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
                                   <span>Teilnehmer:</span>
                                   <span>{groupSize} Personen</span>
                                 </div>
                               )}
                               <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
+                                <span>Treffpunkt:</span>
+                                <span style={{ fontWeight: 500 }}>Lange Straße, Höhe Cup&Cino</span>
+                              </div>
+                              <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
                                 <span>Im Gewand:</span>
                                 <span style={{ color: '#10b981', fontWeight: 600 }}>Inklusive</span>
                               </div>
+                              {tourType === 'public' && (
+                                <div className="booking-summary-row" style={{ marginBottom: '6px' }}>
+                                  <span>Zahlung:</span>
+                                  <span style={{ color: 'var(--accent)', fontWeight: 600 }}>Vor Ort in bar (10€ p.P.)</span>
+                                </div>
+                              )}
                               <div className="booking-summary-row total" style={{ paddingTop: '8px', marginTop: '8px' }}>
-                                <span>Voraussichtlicher Preis:</span>
+                                <span>{tourType === 'public' ? 'Gesamtpreis vor Ort:' : 'Voraussichtlicher Preis:'}</span>
                                 <span className="booking-summary-total-val">{calculateTotalCost()},00 €</span>
                               </div>
                             </div>
@@ -1654,7 +1741,7 @@ export default function App() {
                               disabled={isSubmitting || !turnstileToken}
                             >
                               <Flame size={16} className="glow-glow" />
-                              {isSubmitting ? "Wird gesendet..." : "Führung unverbindlich anfragen"}
+                              {isSubmitting ? "Wird gesendet..." : (tourType === 'public' ? "Für öffentliche Führung anmelden" : "Führung unverbindlich anfragen")}
                             </button>
 
                             {/* Mobile Back Button */}
