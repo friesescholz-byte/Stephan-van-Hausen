@@ -1658,11 +1658,11 @@ input[type="range"]::-moz-range-thumb:hover {
     grid-template-columns: 1fr;
     gap: 40px;
   }
-  .nachtwaechter-grid {
-    direction: rtl; /* Flip image to bottom for stack order */
+  .nachtwaechter-img-frame {
+    order: 2;
   }
-  .nachtwaechter-grid > * {
-    direction: ltr; /* Reset text direction inside */
+  .nachtwaechter-grid > *:nth-child(2) {
+    order: 1;
   }
   .galerie-grid {
     grid-template-columns: repeat(2, 1fr);
