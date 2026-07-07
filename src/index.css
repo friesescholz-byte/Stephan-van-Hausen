@@ -577,12 +577,12 @@ section {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: -60px;
+    bottom: 0px;
     width: 80%;
     max-width: 320px;
     height: 380px;
     margin: 0;
-    z-index: 5;
+    z-index: 2;
     opacity: 0.55;
     pointer-events: none;
   }
@@ -1645,12 +1645,12 @@ input[type="range"]::-moz-range-thumb:hover {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: -60px;
+    bottom: 0px;
     width: 80%;
     max-width: 320px;
     height: 380px;
     margin: 0;
-    z-index: 5;
+    z-index: 2;
     opacity: 0.55;
     pointer-events: none;
   }
@@ -1760,10 +1760,10 @@ input[type="range"]::-moz-range-thumb:hover {
 
 @media (max-width: 600px) {
   .hero-character-container {
-    bottom: -45px;
+    bottom: 0px;
     height: 310px;
     max-width: 260px;
-    opacity: 0.5;
+    opacity: 0.55;
   }
   .booking-options {
     grid-template-columns: 1fr;

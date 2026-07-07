@@ -759,6 +759,19 @@ export default function App() {
               <div style={{ pointerEvents: 'none' }} />
             </div>
           </div>
+          {/* Character cutout placed absolutely to overlay sections (Layer 2) */}
+          <motion.div 
+            className="hero-character-container"
+            initial={{ opacity: 0, y: 120 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number], delay: 0.2 }}
+          >
+            <img 
+              src={IMAGES.cutout} 
+              alt="Stephan van Hausen Nachtwächter" 
+              className="hero-character-img"
+            />
+          </motion.div>
         </div>
 
         {/* Curved Divider wave with glow line */}
@@ -769,19 +782,7 @@ export default function App() {
           </svg>
         </div>
 
-        {/* Character cutout placed absolutely to overlay sections (Layer 2) */}
-        <motion.div 
-          className="hero-character-container"
-          initial={{ opacity: 0, y: 120 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number], delay: 0.2 }}
-        >
-          <img 
-            src={IMAGES.cutout} 
-            alt="Stephan van Hausen Nachtwächter" 
-            className="hero-character-img"
-          />
-        </motion.div>
+
 
 
         {/* Bottom Section containing buttons and detailed introductory text (Part B) */}
