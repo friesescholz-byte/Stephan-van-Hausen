@@ -951,14 +951,15 @@ section {
 
 /* Calendar widget design */
 .calendar-widget {
-  margin-bottom: 30px;
+  max-width: 380px;
+  margin: 0 auto 20px auto;
 }
 
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .calendar-nav-btn {
@@ -989,7 +990,7 @@ section {
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: 6px;
   text-align: center;
 }
 
@@ -998,7 +999,7 @@ section {
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
-  padding: 8px 0;
+  padding: 4px 0;
 }
 
 .calendar-day {
@@ -1041,20 +1042,31 @@ section {
 }
 
 .calendar-day.public-tour-day {
-  border: 1px dashed var(--accent) !important;
+  border: 1px solid rgba(217, 162, 74, 0.45) !important;
+  background-color: rgba(217, 162, 74, 0.12) !important;
   color: var(--accent) !important;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 0 8px rgba(217, 162, 74, 0.15);
+}
+
+.calendar-day.public-tour-day:hover:not(.disabled):not(.selected) {
+  background-color: rgba(217, 162, 74, 0.22) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 12px rgba(217, 162, 74, 0.3);
 }
 
 .calendar-day.public-tour-day.selected {
   background-color: var(--accent) !important;
   color: var(--bg-dark) !important;
-  border-style: solid !important;
+  border: 1px solid var(--accent) !important;
+  box-shadow: var(--shadow-gold-strong);
 }
 
 .calendar-day.public-tour-day.disabled {
-  border-color: rgba(217, 162, 74, 0.25) !important;
-  color: rgba(217, 162, 74, 0.35) !important;
+  border-color: rgba(217, 162, 74, 0.15) !important;
+  background-color: rgba(217, 162, 74, 0.02) !important;
+  color: rgba(217, 162, 74, 0.25) !important;
+  box-shadow: none;
 }
 
 /* Booking Options Grid */

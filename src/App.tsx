@@ -1429,13 +1429,13 @@ export default function App() {
                             </div>
                             
                             {/* Calendar Legend */}
-                            <div style={{ marginTop: '12px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '16px', fontSize: '0.75rem', color: 'var(--text-cream)', opacity: 0.85 }}>
+                            <div style={{ marginTop: '14px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '18px', fontSize: '0.78rem', color: 'var(--text-cream)', opacity: 0.9 }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                 <span style={{ display: 'inline-block', width: '10px', height: '10px', backgroundColor: 'var(--accent)', borderRadius: '50%' }}></span>
                                 <span>Ausgewählt</span>
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span style={{ display: 'inline-block', width: '10px', height: '10px', border: '1px dashed var(--accent)', borderRadius: '2px' }}></span>
+                                <span style={{ display: 'inline-block', width: '12px', height: '12px', border: '1px solid rgba(217, 162, 74, 0.5)', backgroundColor: 'rgba(217, 162, 74, 0.15)', borderRadius: '3px' }}></span>
                                 <span>Öffentliche Führung (10€)</span>
                               </div>
                             </div>
