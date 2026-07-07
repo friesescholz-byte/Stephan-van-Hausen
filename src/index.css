@@ -930,7 +930,7 @@ section {
   flex-direction: column;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1300px) {
   .booking-grid-wrapper {
     grid-template-columns: 1fr;
     gap: 32px;
@@ -1056,6 +1056,12 @@ section {
   border: 1px dashed var(--accent) !important;
   color: var(--accent) !important;
   font-weight: 600;
+}
+
+.calendar-day.public-tour-day.selected {
+  background-color: var(--accent) !important;
+  color: var(--bg-dark) !important;
+  border-style: solid !important;
 }
 
 .calendar-day.public-tour-day.disabled {

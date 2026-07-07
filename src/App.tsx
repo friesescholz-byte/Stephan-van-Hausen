@@ -1481,6 +1481,7 @@ export default function App() {
                               className={`booking-option-card ${tourType === 'classic' ? 'selected' : ''}`}
                               onClick={() => {
                                 setTourType('classic');
+                                setGroupSize(10);
                               }}
                             >
                               <h5>Standard-Führung</h5>
@@ -1500,6 +1501,7 @@ export default function App() {
                               onClick={() => {
                                 setTourType('public');
                                 setSelectedTime('18:00');
+                                setGroupSize(1);
                                 if (selectedDate && !isFirstOrThirdFriday(selectedDate)) {
                                   setSelectedDate(null);
                                 }
