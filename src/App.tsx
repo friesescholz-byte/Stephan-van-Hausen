@@ -1167,7 +1167,7 @@ export default function App() {
                   <CalendarIcon size={22} style={{ color: 'var(--accent)' }} />
                 </div>
                 <div className="trust-card-info">
-                  <h4>Nächste Termine</h4>
+                  <h4>Nächste öffentliche Führungen</h4>
                   <p>{getNextTwoPublicTours()}</p>
                 </div>
               </motion.div>
