@@ -17,7 +17,8 @@ import {
   Phone,
   Mail,
   User,
-  Clock
+  Clock,
+  Save
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -112,13 +113,10 @@ export default function App() {
   const [adminPasswordInput, setAdminPasswordInput] = useState("");
   const [adminLoginError, setAdminLoginError] = useState("");
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
-  const [publicTourConfig, setPublicTourConfig] = useState<{
-    publicTourType: 'default' | 'custom';
-    customDates: string[];
-  }>({
-    publicTourType: 'default',
-    customDates: []
-  });
+  const [publicTourOverrides, setPublicTourOverrides] = useState<Record<string, boolean>>({});
+  const [selectedAdminDate, setSelectedAdminDate] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
 
   // Popstate/URL check for /admin route
   useEffect(() => {
@@ -157,7 +155,14 @@ export default function App() {
         const res = await fetch('https://friesescholzwebdesign.pages.dev/api/public-config');
         if (res.ok) {
           const data = await res.json();
-          setPublicTourConfig(data);
+          if (data) {
+            if (data.publicTourOverrides) {
+              setPublicTourOverrides(data.publicTourOverrides);
+            }
+            if (data.blockedDates) {
+              setBlockedDates(data.blockedDates);
+            }
+          }
         }
       } catch (e) {
         console.error('Error fetching public config:', e);
@@ -396,8 +401,9 @@ export default function App() {
     const d = String(date.getDate()).padStart(2, '0');
     const dateStr = `${y}-${m}-${d}`;
 
-    if (publicTourConfig.publicTourType === 'custom') {
-      return (publicTourConfig.customDates || []).includes(dateStr);
+    // Check if explicitly overridden
+    if (publicTourOverrides[dateStr] !== undefined) {
+      return publicTourOverrides[dateStr];
     }
 
     if (date.getDay() !== 5) return false;
@@ -410,39 +416,33 @@ export default function App() {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const dates: Date[] = [];
     
-    if (publicTourConfig.publicTourType === 'custom') {
-      const todayStr = today.toISOString().split('T')[0];
-      const futureCustom = (publicTourConfig.customDates || [])
-        .filter(d => d >= todayStr)
-        .sort()
-        .slice(0, 2);
-        
-      if (futureCustom.length === 0) {
-        return "Keine aktuellen Termine geplant";
+    let checkDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    for (let i = 0; i < 90; i++) {
+      if (!isDayBlocked(checkDate) && isPublicTourDate(checkDate)) {
+        dates.push(new Date(checkDate));
+        if (dates.length === 2) break;
       }
-      
-      return futureCustom.map(dStr => {
-        const dateObj = new Date(dStr);
-        return dateObj.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      }).join(' & ');
-    } else {
-      let checkDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      for (let i = 0; i < 90; i++) {
-        if (isPublicTourDate(checkDate)) {
-          dates.push(new Date(checkDate));
-          if (dates.length === 2) break;
-        }
-        checkDate.setDate(checkDate.getDate() + 1);
-      }
-      
-      if (dates.length === 0) {
-        return "Keine aktuellen Termine geplant";
-      }
-      
-      return dates.map(d => {
-        return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      }).join(' & ');
+      checkDate.setDate(checkDate.getDate() + 1);
     }
+    
+    if (dates.length === 0) {
+      return "Keine aktuellen Termine geplant";
+    }
+    
+    return dates.map(d => {
+      return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }).join(' & ');
+  };
+
+  const getPublicTourDescription = (date: Date | null): string => {
+    if (!date) {
+      return 'Jeden 1. & 3. Fr. im Monat um 18:00 Uhr. 10€ p.P. (bar vor Ort)';
+    }
+    const isPublic = isPublicTourDate(date);
+    if (isPublic) {
+      return 'Öffentliche Führung findet statt! Start um 18:00 Uhr. 10€ p.P. (bar vor Ort)';
+    }
+    return 'An diesem Tag findet leider keine öffentliche Führung statt.';
   };
 
   const isDayDisabled = (dayNum: number | null) => {
@@ -497,23 +497,37 @@ export default function App() {
   const handleAdminLogout = () => {
     setIsAdminLoggedIn(false);
     sessionStorage.removeItem('nienburger_nachtwaechter_admin_auth');
+    setSelectedAdminDate(null);
   };
 
-  const toggleBlockDate = (dateStr: string) => {
-    let updated;
-    if (blockedDates.includes(dateStr)) {
-      updated = blockedDates.filter(d => d !== dateStr);
-    } else {
-      updated = [...blockedDates, dateStr].sort();
-    }
-    setBlockedDates(updated);
-    localStorage.setItem('nienburger_nachtwaechter_blocked_dates', JSON.stringify(updated));
-  };
+  const saveSettingsToCloud = async () => {
+    setIsSaving(true);
+    setSaveMessage("");
+    try {
+      const response = await fetch('https://friesescholzwebdesign.pages.dev/api/admin/nachtwaechter-config', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer nienburg1025`
+        },
+        body: JSON.stringify({
+          config: {
+            blockedDates,
+            publicTourOverrides
+          }
+        })
+      });
 
-  const clearAllBlockedDates = () => {
-    if (window.confirm("Möchtest du wirklich alle gesperrten Termine wieder freigeben?")) {
-      setBlockedDates([]);
-      localStorage.removeItem('nienburger_nachtwaechter_blocked_dates');
+      if (response.ok) {
+        setSaveMessage("Erfolgreich gespeichert!");
+        setTimeout(() => setSaveMessage(""), 3000);
+      } else {
+        setSaveMessage("Fehler beim Speichern!");
+      }
+    } catch (e) {
+      setSaveMessage("Netzwerkfehler!");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -584,7 +598,7 @@ export default function App() {
                 
                 {/* Calendar Card */}
                 <div className="booking-container" style={{ padding: '24px' }}>
-                  <h4 style={{ color: 'var(--accent)', marginBottom: '16px', fontSize: '1.1rem' }}>Kalender (Tage anklicken zum Sperren/Freigeben)</h4>
+                  <h4 style={{ color: 'var(--accent)', marginBottom: '16px', fontSize: '1.1rem' }}>Kalender (Tage anklicken zum Bearbeiten)</h4>
                   
                   <div className="calendar-widget" style={{ marginBottom: 0 }}>
                     <div className="calendar-header">
@@ -622,61 +636,203 @@ export default function App() {
                         const d = String(date.getDate()).padStart(2, '0');
                         const dateStr = `${y}-${m}-${d}`;
                         const isBlocked = blockedDates.includes(dateStr);
+                        const isPublic = isPublicTourDate(date);
+                        const isSelectedAdmin = selectedAdminDate === dateStr;
+
+                        let bg = 'rgba(16, 185, 129, 0.1)';
+                        let border = '1px solid rgba(16, 185, 129, 0.4)';
+                        let color = '#34d399';
+
+                        if (isPast) {
+                          bg = 'transparent';
+                          border = '1px solid rgba(255, 255, 255, 0.05)';
+                          color = 'rgba(255,255,255,0.15)';
+                        } else if (isBlocked) {
+                          bg = 'rgba(239, 68, 68, 0.2)';
+                          border = '1px solid #ef4444';
+                          color = '#f87171';
+                        } else if (isPublic) {
+                          bg = 'rgba(59, 130, 246, 0.15)';
+                          border = '1px solid #3b82f6';
+                          color = '#60a5fa';
+                        }
                         
                         return (
                           <div 
                             key={index} 
-                            className={`calendar-day ${isBlocked ? 'disabled' : ''}`}
+                            className="calendar-day"
                             style={{ 
-                              background: isPast ? 'transparent' : isBlocked ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.1)',
-                              border: isBlocked ? '1px solid #ef4444' : '1px solid rgba(16, 185, 129, 0.4)',
-                              color: isPast ? 'rgba(255,255,255,0.15)' : isBlocked ? '#f87171' : '#34d399',
-                              cursor: isPast ? 'not-allowed' : 'pointer'
+                              background: bg,
+                              border: border,
+                              color: color,
+                              cursor: isPast ? 'not-allowed' : 'pointer',
+                              outline: isSelectedAdmin ? '2px solid var(--accent)' : 'none',
+                              outlineOffset: isSelectedAdmin ? '2px' : '0px',
+                              position: 'relative'
                             }}
                             onClick={() => {
                               if (!isPast) {
-                                toggleBlockDate(dateStr);
+                                setSelectedAdminDate(dateStr);
                               }
                             }}
                           >
                             {dayObj.dayNumber}
+                            {!isPast && isPublic && !isBlocked && (
+                              <span style={{
+                                position: 'absolute',
+                                bottom: '3px',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                width: '4px',
+                                height: '4px',
+                                borderRadius: '50%',
+                                background: '#60a5fa'
+                              }} />
+                            )}
                           </div>
                         );
                       })}
                     </div>
                   </div>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '16px' }}>
-                    🟢 Grün = Termin ist frei (Standard) | 🔴 Rot = Termin ist belegt/gesperrt
-                  </p>
+                  
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+                    <span>🟢 Grün = Buchbar (Privat)</span>
+                    <span>🔵 Blau = Buchbar (Öffentliche Führung)</span>
+                    <span>🔴 Rot = Belegt / Gesperrt</span>
+                  </div>
                 </div>
 
-                {/* Blocked Dates List Card */}
-                <div className="booking-container" style={{ padding: '24px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                    <h4 style={{ color: 'var(--accent)', fontSize: '1.1rem', margin: 0 }}>Gesperrte Termine ({blockedDates.length})</h4>
-                    {blockedDates.length > 0 && (
-                      <button className="footer-link-btn" onClick={clearAllBlockedDates} style={{ color: '#ef4444' }}>Alle freigeben</button>
-                    )}
-                  </div>
-                  
-                  {blockedDates.length === 0 ? (
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontStyle: 'italic', margin: 0 }}>Keine Tage gesperrt. Alle Termine sind online frei buchbar.</p>
-                  ) : (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', maxHeight: '200px', overflowY: 'auto', paddingRight: '8px' }}>
-                      {blockedDates.map(dateStr => (
-                        <div key={dateStr} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '4px', padding: '6px 12px', fontSize: '0.85rem', color: '#f87171' }}>
-                          <span>{formatGermanDate(dateStr)}</span>
-                          <button 
-                            type="button" 
-                            style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem', padding: 0 }}
-                            onClick={() => toggleBlockDate(dateStr)}
-                          >
-                            ×
-                          </button>
+                {/* Editor and Save Panel */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {selectedAdminDate && (
+                    <div className="booking-container" style={{ padding: '24px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                        <h4 style={{ color: 'var(--accent)', fontSize: '1.1rem', margin: 0 }}>Optionen für {formatGermanDate(selectedAdminDate)}</h4>
+                        <button 
+                          type="button"
+                          className="footer-link-btn" 
+                          onClick={() => setSelectedAdminDate(null)}
+                          style={{ color: 'var(--text-muted)' }}
+                        >
+                          Schließen
+                        </button>
+                      </div>
+
+                      {/* Option 1: General Availability */}
+                      <div style={{ marginBottom: '20px' }}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '8px' }}>
+                          Allgemeine Verfügbarkeit (für private Gruppen)
+                        </span>
+                        <div style={{ display: 'flex', gap: '16px' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                            <input 
+                              type="radio" 
+                              name="admin-avail" 
+                              checked={!blockedDates.includes(selectedAdminDate)} 
+                              onChange={() => {
+                                const updated = blockedDates.filter(d => d !== selectedAdminDate);
+                                setBlockedDates(updated);
+                              }}
+                              style={{ accentColor: 'var(--accent)' }}
+                            />
+                            <span>Frei (Buchbar)</span>
+                          </label>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                            <input 
+                              type="radio" 
+                              name="admin-avail" 
+                              checked={blockedDates.includes(selectedAdminDate)} 
+                              onChange={() => {
+                                if (!blockedDates.includes(selectedAdminDate)) {
+                                  setBlockedDates([...blockedDates, selectedAdminDate].sort());
+                                }
+                              }}
+                              style={{ accentColor: 'var(--accent)' }}
+                            />
+                            <span style={{ color: '#f87171' }}>Belegt / Gesperrt</span>
+                          </label>
                         </div>
-                      ))}
+                      </div>
+
+                      {/* Option 2: Public Tour Setting */}
+                      <div style={{ marginBottom: '10px' }}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '8px' }}>
+                          Öffentliche Nachtwächter-Führung
+                        </span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                            <input 
+                              type="radio" 
+                              name="admin-public" 
+                              checked={publicTourOverrides[selectedAdminDate] === undefined} 
+                              onChange={() => {
+                                const updated = { ...publicTourOverrides };
+                                delete updated[selectedAdminDate];
+                                setPublicTourOverrides(updated);
+                              }}
+                              style={{ accentColor: 'var(--accent)' }}
+                            />
+                            <span>Standard (1. & 3. Freitag des Monats)</span>
+                          </label>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                            <input 
+                              type="radio" 
+                              name="admin-public" 
+                              checked={publicTourOverrides[selectedAdminDate] === true} 
+                              onChange={() => {
+                                setPublicTourOverrides({ ...publicTourOverrides, [selectedAdminDate]: true });
+                              }}
+                              style={{ accentColor: 'var(--accent)' }}
+                            />
+                            <span style={{ color: '#60a5fa' }}>Ja (Öffentliche Führung an diesem Tag anbieten)</span>
+                          </label>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                            <input 
+                              type="radio" 
+                              name="admin-public" 
+                              checked={publicTourOverrides[selectedAdminDate] === false} 
+                              onChange={() => {
+                                setPublicTourOverrides({ ...publicTourOverrides, [selectedAdminDate]: false });
+                              }}
+                              style={{ accentColor: 'var(--accent)' }}
+                            />
+                            <span style={{ color: '#f87171' }}>Nein (Keine öffentliche Führung anbieten)</span>
+                          </label>
+                        </div>
+                      </div>
                     </div>
                   )}
+
+                  {/* Save Panel */}
+                  <div className="booking-container" style={{ padding: '24px' }}>
+                    <h4 style={{ color: 'var(--accent)', fontSize: '1.1rem', marginBottom: '12px' }}>Änderungen speichern</h4>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: '1.4' }}>
+                      Klicke auf den Button unten, um alle Änderungen an den Verfügbarkeiten und öffentlichen Terminen dauerhaft zu speichern.
+                    </p>
+                    
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        {saveMessage && (
+                          <span style={{ 
+                            fontSize: '0.9rem', 
+                            color: saveMessage.includes('Erfolgreich') ? '#34d399' : '#f87171',
+                            fontWeight: 600
+                          }}>
+                            {saveMessage}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <button 
+                        className="btn-medieval-cta" 
+                        onClick={saveSettingsToCloud}
+                        disabled={isSaving}
+                        style={{ minWidth: '180px' }}
+                      >
+                        <Save size={16} /> {isSaving ? "Speichert..." : "Cloud-Speichern"}
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
               </div>
@@ -1592,11 +1748,7 @@ export default function App() {
                               }}
                             >
                               <h5>Öffentliche Führung</h5>
-                              <p>
-                                {publicTourConfig.publicTourType === 'custom' 
-                                  ? 'An ausgewählten Terminen um 18:00 Uhr. 10€ p.P. (bar vor Ort)'
-                                  : 'Jeden 1. & 3. Fr. im Monat um 18:00 Uhr. 10€ p.P. (bar vor Ort)'}
-                              </p>
+                              <p>{getPublicTourDescription(selectedDate)}</p>
                             </div>
                           </div>
 
