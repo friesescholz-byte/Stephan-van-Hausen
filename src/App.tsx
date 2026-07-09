@@ -519,10 +519,10 @@ export default function App() {
       });
 
       if (response.ok) {
-        setSaveMessage("Erfolgreich gespeichert!");
+        setSaveMessage("Erfolgreich veröffentlicht!");
         setTimeout(() => setSaveMessage(""), 3000);
       } else {
-        setSaveMessage("Fehler beim Speichern!");
+        setSaveMessage("Fehler beim Veröffentlichen!");
       }
     } catch (e) {
       setSaveMessage("Netzwerkfehler!");
@@ -706,7 +706,7 @@ export default function App() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   {selectedAdminDate && (
                     <div className="booking-container" style={{ padding: '24px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                         <h4 style={{ color: 'var(--accent)', fontSize: '1.1rem', margin: 0 }}>Optionen für {formatGermanDate(selectedAdminDate)}</h4>
                         <button 
                           type="button"
@@ -719,95 +719,150 @@ export default function App() {
                       </div>
 
                       {/* Option 1: General Availability */}
-                      <div style={{ marginBottom: '20px' }}>
-                        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '8px' }}>
+                      <div style={{ marginBottom: '10px' }}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '12px' }}>
                           Allgemeine Verfügbarkeit (für private Gruppen)
                         </span>
-                        <div style={{ display: 'flex', gap: '16px' }}>
-                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                            <input 
-                              type="radio" 
-                              name="admin-avail" 
-                              checked={!blockedDates.includes(selectedAdminDate)} 
-                              onChange={() => {
-                                const updated = blockedDates.filter(d => d !== selectedAdminDate);
-                                setBlockedDates(updated);
-                              }}
-                              style={{ accentColor: 'var(--accent)' }}
-                            />
-                            <span>Frei (Buchbar)</span>
-                          </label>
-                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                            <input 
-                              type="radio" 
-                              name="admin-avail" 
-                              checked={blockedDates.includes(selectedAdminDate)} 
-                              onChange={() => {
-                                if (!blockedDates.includes(selectedAdminDate)) {
-                                  setBlockedDates([...blockedDates, selectedAdminDate].sort());
-                                }
-                              }}
-                              style={{ accentColor: 'var(--accent)' }}
-                            />
-                            <span style={{ color: '#f87171' }}>Belegt / Gesperrt</span>
-                          </label>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = blockedDates.filter(d => d !== selectedAdminDate);
+                              setBlockedDates(updated);
+                            }}
+                            style={{
+                              flex: 1,
+                              padding: '12px',
+                              borderRadius: '6px',
+                              background: !blockedDates.includes(selectedAdminDate) ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                              border: !blockedDates.includes(selectedAdminDate) ? '2px solid #10b981' : '1px solid var(--border-color)',
+                              color: !blockedDates.includes(selectedAdminDate) ? '#34d399' : 'var(--text-muted)',
+                              fontWeight: !blockedDates.includes(selectedAdminDate) ? '700' : 'normal',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '8px',
+                              fontFamily: 'inherit'
+                            }}
+                          >
+                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }}></span>
+                            Frei (Buchbar)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (!blockedDates.includes(selectedAdminDate)) {
+                                setBlockedDates([...blockedDates, selectedAdminDate].sort());
+                              }
+                            }}
+                            style={{
+                              flex: 1,
+                              padding: '12px',
+                              borderRadius: '6px',
+                              background: blockedDates.includes(selectedAdminDate) ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                              border: blockedDates.includes(selectedAdminDate) ? '2px solid #ef4444' : '1px solid var(--border-color)',
+                              color: blockedDates.includes(selectedAdminDate) ? '#f87171' : 'var(--text-muted)',
+                              fontWeight: blockedDates.includes(selectedAdminDate) ? '700' : 'normal',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '8px',
+                              fontFamily: 'inherit'
+                            }}
+                          >
+                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', display: 'inline-block' }}></span>
+                            Belegt / Gesperrt
+                          </button>
                         </div>
                       </div>
 
-                      {/* Option 2: Public Tour Setting */}
-                      <div style={{ marginBottom: '10px' }}>
-                        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '8px' }}>
-                          Öffentliche Nachtwächter-Führung
-                        </span>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                            <input 
-                              type="radio" 
-                              name="admin-public" 
-                              checked={publicTourOverrides[selectedAdminDate] === undefined} 
-                              onChange={() => {
+                      {/* Option 2: Public Tour Setting - Only visible if day is FREE/Buchbar */}
+                      {!blockedDates.includes(selectedAdminDate) && (
+                        <div style={{ marginTop: '24px', marginBottom: '10px' }}>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '12px' }}>
+                            Öffentliche Nachtwächter-Führung anbieten?
+                          </span>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px' }}>
+                            <button
+                              type="button"
+                              onClick={() => {
                                 const updated = { ...publicTourOverrides };
                                 delete updated[selectedAdminDate];
                                 setPublicTourOverrides(updated);
                               }}
-                              style={{ accentColor: 'var(--accent)' }}
-                            />
-                            <span>Standard (1. & 3. Freitag des Monats)</span>
-                          </label>
-                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                            <input 
-                              type="radio" 
-                              name="admin-public" 
-                              checked={publicTourOverrides[selectedAdminDate] === true} 
-                              onChange={() => {
+                              style={{
+                                padding: '12px',
+                                borderRadius: '6px',
+                                background: publicTourOverrides[selectedAdminDate] === undefined ? 'rgba(217, 162, 74, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                                border: publicTourOverrides[selectedAdminDate] === undefined ? '2px solid var(--accent)' : '1px solid var(--border-color)',
+                                color: publicTourOverrides[selectedAdminDate] === undefined ? 'var(--accent)' : 'var(--text-muted)',
+                                fontWeight: publicTourOverrides[selectedAdminDate] === undefined ? '700' : 'normal',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                textAlign: 'center',
+                                fontSize: '0.85rem',
+                                fontFamily: 'inherit'
+                              }}
+                            >
+                              Standard (1. & 3. Fr)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
                                 setPublicTourOverrides({ ...publicTourOverrides, [selectedAdminDate]: true });
                               }}
-                              style={{ accentColor: 'var(--accent)' }}
-                            />
-                            <span style={{ color: '#60a5fa' }}>Ja (Öffentliche Führung an diesem Tag anbieten)</span>
-                          </label>
-                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                            <input 
-                              type="radio" 
-                              name="admin-public" 
-                              checked={publicTourOverrides[selectedAdminDate] === false} 
-                              onChange={() => {
+                              style={{
+                                padding: '12px',
+                                borderRadius: '6px',
+                                background: publicTourOverrides[selectedAdminDate] === true ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                                border: publicTourOverrides[selectedAdminDate] === true ? '2px solid #3b82f6' : '1px solid var(--border-color)',
+                                color: publicTourOverrides[selectedAdminDate] === true ? '#60a5fa' : 'var(--text-muted)',
+                                fontWeight: publicTourOverrides[selectedAdminDate] === true ? '700' : 'normal',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                textAlign: 'center',
+                                fontSize: '0.85rem',
+                                fontFamily: 'inherit'
+                              }}
+                            >
+                              Ja (Führung anbieten)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
                                 setPublicTourOverrides({ ...publicTourOverrides, [selectedAdminDate]: false });
                               }}
-                              style={{ accentColor: 'var(--accent)' }}
-                            />
-                            <span style={{ color: '#f87171' }}>Nein (Keine öffentliche Führung anbieten)</span>
-                          </label>
+                              style={{
+                                padding: '12px',
+                                borderRadius: '6px',
+                                background: publicTourOverrides[selectedAdminDate] === false ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                                border: publicTourOverrides[selectedAdminDate] === false ? '2px solid #ef4444' : '1px solid var(--border-color)',
+                                color: publicTourOverrides[selectedAdminDate] === false ? '#f87171' : 'var(--text-muted)',
+                                fontWeight: publicTourOverrides[selectedAdminDate] === false ? '700' : 'normal',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                textAlign: 'center',
+                                fontSize: '0.85rem',
+                                fontFamily: 'inherit'
+                              }}
+                            >
+                              Nein (Keine Führung)
+                            </button>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   )}
 
                   {/* Save Panel */}
                   <div className="booking-container" style={{ padding: '24px' }}>
-                    <h4 style={{ color: 'var(--accent)', fontSize: '1.1rem', marginBottom: '12px' }}>Änderungen speichern</h4>
+                    <h4 style={{ color: 'var(--accent)', fontSize: '1.1rem', marginBottom: '12px' }}>Änderungen veröffentlichen</h4>
                     <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: '1.4' }}>
-                      Klicke auf den Button unten, um alle Änderungen an den Verfügbarkeiten und öffentlichen Terminen dauerhaft zu speichern.
+                      Klicke auf den Button unten, um alle geänderten Termine live auf der Website zu veröffentlichen.
                     </p>
                     
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -827,9 +882,9 @@ export default function App() {
                         className="btn-medieval-cta" 
                         onClick={saveSettingsToCloud}
                         disabled={isSaving}
-                        style={{ minWidth: '180px' }}
+                        style={{ minWidth: '220px' }}
                       >
-                        <Save size={16} /> {isSaving ? "Speichert..." : "Cloud-Speichern"}
+                        <Save size={16} className="glow-glow" /> {isSaving ? "Veröffentlicht..." : "Jetzt veröffentlichen"}
                       </button>
                     </div>
                   </div>
