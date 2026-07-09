@@ -829,7 +829,7 @@ export default function App() {
                                 fontFamily: 'inherit'
                               }}
                             >
-                              Ja (Führung anbieten)
+                              Ja (Öffentliche Führung)
                             </button>
                             <button
                               type="button"
@@ -850,7 +850,7 @@ export default function App() {
                                 fontFamily: 'inherit'
                               }}
                             >
-                              Nein (Keine Führung)
+                              Nein (Öffentliche Führung)
                             </button>
                           </div>
                         </div>
