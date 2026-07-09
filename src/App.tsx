@@ -70,8 +70,8 @@ const IMAGES = {
 
 const GALLERY_IMAGES = {
   // Die 2 alten, die bleiben sollen:
-  fuehrungNacht: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/1000_fuehrung_nachtwaechter_nienburg_20_.jpg",
-  nachtwaechterGasse: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/3LPC2YQCTKNBB7ZRMCIAYE6IL6.avif",
+  fuehrungNacht: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/Screenshot_20230613_150441_Chrome_ergebnis.webp",
+  nachtwaechterGasse: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/Traumhafter%20Blick%20auf%20Nienburgs%20T%C3%BCrme%20vom%20Hasbergschen%20Hof%20aus_ergebnis.webp",
   
   // Die 8 verbleibenden neuen:
   new2: "https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Stephan-van-Hausen/Gallerie/20181123_200544_ergebnis.webp",
@@ -1281,7 +1281,7 @@ export default function App() {
               viewport={{ once: true, margin: "-100px" }}
               variants={fadeIn}
             >
-              <img src={IMAGES.ambient} alt="Historische Altstadt Nienburg bei Nacht" className="erlebnis-image" />
+              <img src={IMAGES.ambient} alt="Historische Altstadt Nienburg bei Nacht" className="erlebnis-image" loading="lazy" decoding="async" />
               <div className="erlebnis-image-overlay" />
             </motion.div>
           </div>
@@ -1301,7 +1301,7 @@ export default function App() {
               viewport={{ once: true, margin: "-100px" }}
               variants={fadeIn}
             >
-              <img src={IMAGES.portrait} alt="Stephan van Hausen Portrait" className="nachtwaechter-img" />
+              <img src={IMAGES.portrait} alt="Stephan van Hausen Portrait" className="nachtwaechter-img" loading="lazy" decoding="async" />
             </motion.div>
 
             {/* Right text layout */}
@@ -1476,7 +1476,7 @@ export default function App() {
               viewport={{ once: true, margin: "-100px" }}
               variants={fadeIn}
             >
-              <img src={IMAGES.group} alt="Gruppe bei der Nienburger Nachtwächter Stadtführung" className="erlebnis-image" />
+              <img src={IMAGES.group} alt="Gruppe bei der Nienburger Nachtwächter Stadtführung" className="erlebnis-image" loading="lazy" decoding="async" />
               <div className="erlebnis-image-overlay" />
             </motion.div>
           </div>
@@ -1499,47 +1499,47 @@ export default function App() {
           <div className="galerie-grid">
             {/* Reihe 1 & 2 */}
             <div className="galerie-item big" onClick={() => setLightboxImg(GALLERY_IMAGES.new2)}>
-              <img src={GALLERY_IMAGES.new2} alt="Stefan Hilker als Nachtwächter" />
+              <img src={GALLERY_IMAGES.new2} alt="Stefan Hilker als Nachtwächter" loading="lazy" decoding="async" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
             <div className="galerie-item tall" onClick={() => setLightboxImg(GALLERY_IMAGES.new7)}>
-              <img src={GALLERY_IMAGES.new7} alt="Historische Redensarten und Sagen" />
+              <img src={GALLERY_IMAGES.new7} alt="Historische Redensarten und Sagen" loading="lazy" decoding="async" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
             <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new4)}>
-              <img src={GALLERY_IMAGES.new4} alt="Nachtwächter Führung bei Mondlicht" />
+              <img src={GALLERY_IMAGES.new4} alt="Nachtwächter Führung bei Mondlicht" loading="lazy" decoding="async" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
             <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new6)}>
-              <img src={GALLERY_IMAGES.new6} alt="Traditionelle Kostüme und Laternenlicht" />
+              <img src={GALLERY_IMAGES.new6} alt="Traditionelle Kostüme und Laternenlicht" loading="lazy" decoding="async" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
 
             {/* Reihe 3 & 4 */}
             <div className="galerie-item tall" onClick={() => setLightboxImg(GALLERY_IMAGES.new9)}>
-              <img src={GALLERY_IMAGES.new9} alt="Gruppen-Erlebnis im Fackelschein" />
+              <img src={GALLERY_IMAGES.new9} alt="Gruppen-Erlebnis im Fackelschein" loading="lazy" decoding="async" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
             <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new8)}>
-              <img src={GALLERY_IMAGES.new8} alt="Stadtführung Nienburg bei Nacht" />
+              <img src={GALLERY_IMAGES.new8} alt="Stadtführung Nienburg bei Nacht" loading="lazy" decoding="async" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
             <div className="galerie-item big" onClick={() => setLightboxImg(GALLERY_IMAGES.new3)}>
-              <img src={GALLERY_IMAGES.new3} alt="Historische Nienburger Stadtführung" />
+              <img src={GALLERY_IMAGES.new3} alt="Historische Nienburger Stadtführung" loading="lazy" decoding="async" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
             <div className="galerie-item" onClick={() => setLightboxImg(GALLERY_IMAGES.new5)}>
-              <img src={GALLERY_IMAGES.new5} alt="Stadtgeschichte hautnah erleben" />
+              <img src={GALLERY_IMAGES.new5} alt="Stadtgeschichte hautnah erleben" loading="lazy" decoding="async" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
 
             {/* Reihe 5 */}
             <div className="galerie-item wide" onClick={() => setLightboxImg(GALLERY_IMAGES.fuehrungNacht)}>
-              <img src={GALLERY_IMAGES.fuehrungNacht} alt="Nachtwächter-Führung Nienburg Gruppe" />
+              <img src={GALLERY_IMAGES.fuehrungNacht} alt="Nachtwächter-Führung Nienburg Gruppe" loading="lazy" decoding="async" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
             <div className="galerie-item wide" onClick={() => setLightboxImg(GALLERY_IMAGES.nachtwaechterGasse)}>
-              <img src={GALLERY_IMAGES.nachtwaechterGasse} alt="Nachtwächter Führung Altstadtgasse" />
+              <img src={GALLERY_IMAGES.nachtwaechterGasse} alt="Nachtwächter Führung Altstadtgasse" loading="lazy" decoding="async" />
               <div className="galerie-item-overlay">Vergrößern</div>
             </div>
           </div>
