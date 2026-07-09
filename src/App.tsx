@@ -97,7 +97,10 @@ export default function App() {
 
   // Booking states
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [currentCalendarMonth, setCurrentCalendarMonth] = useState(new Date(2026, 5, 1)); // June 2026
+  const [currentCalendarMonth, setCurrentCalendarMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
   const [tourType, setTourType] = useState<'classic' | 'school' | 'public'>('classic');
   const [groupSize, setGroupSize] = useState<number>(10);
   const [selectedTime, setSelectedTime] = useState<string>("19:00");
@@ -109,6 +112,13 @@ export default function App() {
   const [adminPasswordInput, setAdminPasswordInput] = useState("");
   const [adminLoginError, setAdminLoginError] = useState("");
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
+  const [publicTourConfig, setPublicTourConfig] = useState<{
+    publicTourType: 'default' | 'custom';
+    customDates: string[];
+  }>({
+    publicTourType: 'default',
+    customDates: []
+  });
 
   // Popstate/URL check for /admin route
   useEffect(() => {
@@ -140,6 +150,20 @@ export default function App() {
     if (loggedIn === 'true') {
       setIsAdminLoggedIn(true);
     }
+
+    // Fetch public config
+    const fetchConfig = async () => {
+      try {
+        const res = await fetch('https://friesescholzwebdesign.pages.dev/api/public-config');
+        if (res.ok) {
+          const data = await res.json();
+          setPublicTourConfig(data);
+        }
+      } catch (e) {
+        console.error('Error fetching public config:', e);
+      }
+    };
+    fetchConfig();
 
     return () => {
       window.removeEventListener('popstate', checkAdminRoute);
@@ -340,8 +364,9 @@ export default function App() {
     const year = currentCalendarMonth.getFullYear();
     const month = currentCalendarMonth.getMonth();
     if (direction === 'prev') {
-      // Don't navigate to past months before June 2026
-      if (year === 2026 && month === 5) return;
+      // Don't navigate to past months before the current month
+      const now = new Date();
+      if (year < now.getFullYear() || (year === now.getFullYear() && month <= now.getMonth())) return;
       setCurrentCalendarMonth(new Date(year, month - 1, 1));
     } else {
       setCurrentCalendarMonth(new Date(year, month + 1, 1));
@@ -365,10 +390,59 @@ export default function App() {
     return blockedDates.includes(dateStr);
   };
 
-  const isFirstOrThirdFriday = (date: Date) => {
+  const isPublicTourDate = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const dateStr = `${y}-${m}-${d}`;
+
+    if (publicTourConfig.publicTourType === 'custom') {
+      return (publicTourConfig.customDates || []).includes(dateStr);
+    }
+
     if (date.getDay() !== 5) return false;
     const day = date.getDate();
     return (day >= 1 && day <= 7) || (day >= 15 && day <= 21);
+  };
+
+  const getNextTwoPublicTours = (): string => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const dates: Date[] = [];
+    
+    if (publicTourConfig.publicTourType === 'custom') {
+      const todayStr = today.toISOString().split('T')[0];
+      const futureCustom = (publicTourConfig.customDates || [])
+        .filter(d => d >= todayStr)
+        .sort()
+        .slice(0, 2);
+        
+      if (futureCustom.length === 0) {
+        return "Keine aktuellen Termine geplant";
+      }
+      
+      return futureCustom.map(dStr => {
+        const dateObj = new Date(dStr);
+        return dateObj.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      }).join(' & ');
+    } else {
+      let checkDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      for (let i = 0; i < 90; i++) {
+        if (isPublicTourDate(checkDate)) {
+          dates.push(new Date(checkDate));
+          if (dates.length === 2) break;
+        }
+        checkDate.setDate(checkDate.getDate() + 1);
+      }
+      
+      if (dates.length === 0) {
+        return "Keine aktuellen Termine geplant";
+      }
+      
+      return dates.map(d => {
+        return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      }).join(' & ');
+    }
   };
 
   const isDayDisabled = (dayNum: number | null) => {
@@ -378,10 +452,11 @@ export default function App() {
       currentCalendarMonth.getMonth(),
       dayNum
     );
-    const today = new Date(2026, 5, 2); // Set reference system date June 2, 2026
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     if (dateToCheck < today) return true;
     if (tourType === 'public') {
-      return !isFirstOrThirdFriday(dateToCheck) || isDayBlocked(dateToCheck);
+      return !isPublicTourDate(dateToCheck) || isDayBlocked(dateToCheck);
     }
     return isDayBlocked(dateToCheck);
   };
@@ -538,7 +613,9 @@ export default function App() {
                           currentCalendarMonth.getMonth(),
                           dayObj.dayNumber
                         );
-                        const isPast = date < new Date(2026, 5, 2);
+                        const now = new Date();
+                        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        const isPast = date < today;
                         
                         const y = date.getFullYear();
                         const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -880,7 +957,7 @@ export default function App() {
                 </div>
                 <div className="trust-card-info">
                   <h4>Nächste Termine</h4>
-                  <p>Fr. & Sa. Abend verfügbar (Juni 2026)</p>
+                  <p>{getNextTwoPublicTours()}</p>
                 </div>
               </motion.div>
 
@@ -1417,7 +1494,7 @@ export default function App() {
                               {generateCalendarDays().map((dayObj, index) => {
                                 const isSel = dayObj.dayNumber ? isDaySelected(dayObj.dayNumber) : false;
                                 const isDis = dayObj.dayNumber ? isDayDisabled(dayObj.dayNumber) : true;
-                                const isPublicFriday = dayObj.dayNumber ? isFirstOrThirdFriday(new Date(
+                                const isPublicFriday = dayObj.dayNumber ? isPublicTourDate(new Date(
                                   currentCalendarMonth.getFullYear(),
                                   currentCalendarMonth.getMonth(),
                                   dayObj.dayNumber
@@ -1509,13 +1586,17 @@ export default function App() {
                                 setTourType('public');
                                 setSelectedTime('18:00');
                                 setGroupSize(1);
-                                if (selectedDate && !isFirstOrThirdFriday(selectedDate)) {
+                                if (selectedDate && !isPublicTourDate(selectedDate)) {
                                   setSelectedDate(null);
                                 }
                               }}
                             >
                               <h5>Öffentliche Führung</h5>
-                              <p>Jeden 1. &amp; 3. Fr. im Monat um 18:00 Uhr. 10€ p.P. (bar vor Ort)</p>
+                              <p>
+                                {publicTourConfig.publicTourType === 'custom' 
+                                  ? 'An ausgewählten Terminen um 18:00 Uhr. 10€ p.P. (bar vor Ort)'
+                                  : 'Jeden 1. & 3. Fr. im Monat um 18:00 Uhr. 10€ p.P. (bar vor Ort)'}
+                              </p>
                             </div>
                           </div>
 
