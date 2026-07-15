@@ -2101,7 +2101,7 @@ export default function App() {
               </p>
               
               {/* Google Review Button */}
-              <a href="#google-review" className="google-review-btn">
+              <a href="https://search.google.com/local/writereview?placeid=ChIJS_nvYLaJsEcRV_EMmRU6sU8" target="_blank" rel="noopener noreferrer" className="google-review-btn">
                 <span style={{ display: 'flex', gap: '3px' }}>
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} fill="var(--accent)" size={14} stroke="none" />
