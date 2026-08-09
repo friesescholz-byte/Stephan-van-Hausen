@@ -135,45 +135,111 @@ export default function App() {
     checkAdminRoute();
     window.addEventListener('popstate', checkAdminRoute);
     
-    // Check local storage for blocked dates
-    const saved = localStorage.getItem('nienburger_nachtwaechter_blocked_dates');
-    if (saved) {
-      try {
-        setBlockedDates(JSON.parse(saved));
-      } catch (e) {}
-    }
-
     // Check session storage for admin login session
     const loggedIn = sessionStorage.getItem('nienburger_nachtwaechter_admin_auth');
     if (loggedIn === 'true') {
       setIsAdminLoggedIn(true);
     }
 
-    // Fetch public config
-    const fetchConfig = async () => {
-      try {
-        const res = await fetch('https://friesescholzwebdesign.pages.dev/api/public-config');
-        if (res.ok) {
-          const data = await res.json();
-          if (data) {
-            if (data.publicTourOverrides) {
-              setPublicTourOverrides(data.publicTourOverrides);
-            }
-            if (data.blockedDates) {
-              setBlockedDates(data.blockedDates);
-            }
-          }
-        }
-      } catch (e) {
-        console.error('Error fetching public config:', e);
-      }
-    };
-    fetchConfig();
-
     return () => {
       window.removeEventListener('popstate', checkAdminRoute);
     };
   }, []);
+
+  // Fetch configuration depending on admin login state
+  useEffect(() => {
+    const fetchConfig = async () => {
+      if (isAdminLoggedIn) {
+        // Load draft from localStorage first
+        const savedBlocked = localStorage.getItem('nienburger_nachtwaechter_blocked_dates_draft');
+        const savedOverrides = localStorage.getItem('nienburger_nachtwaechter_public_overrides_draft');
+        if (savedBlocked) {
+          try {
+            setBlockedDates(JSON.parse(savedBlocked));
+          } catch (e) {}
+        }
+        if (savedOverrides) {
+          try {
+            setPublicTourOverrides(JSON.parse(savedOverrides));
+          } catch (e) {}
+        }
+
+        // Fetch draft from backend
+        try {
+          const res = await fetch('https://friesescholzwebdesign.pages.dev/api/admin/nachtwaechter-config?draft=true', {
+            headers: {
+              'Authorization': 'Bearer nienburg1025'
+            }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.config) {
+              if (data.config.blockedDates) {
+                setBlockedDates(data.config.blockedDates);
+                localStorage.setItem('nienburger_nachtwaechter_blocked_dates_draft', JSON.stringify(data.config.blockedDates));
+              }
+              if (data.config.publicTourOverrides) {
+                setPublicTourOverrides(data.config.publicTourOverrides);
+                localStorage.setItem('nienburger_nachtwaechter_public_overrides_draft', JSON.stringify(data.config.publicTourOverrides));
+              }
+            }
+          }
+        } catch (e) {
+          console.error('Error fetching draft config:', e);
+        }
+      } else {
+        // Client mode: fetch published config
+        try {
+          const res = await fetch('https://friesescholzwebdesign.pages.dev/api/public-config');
+          if (res.ok) {
+            const data = await res.json();
+            if (data) {
+              if (data.blockedDates) {
+                setBlockedDates(data.blockedDates);
+              }
+              if (data.publicTourOverrides) {
+                setPublicTourOverrides(data.publicTourOverrides);
+              }
+            }
+          }
+        } catch (e) {
+          console.error('Error fetching public config:', e);
+        }
+      }
+    };
+
+    fetchConfig();
+  }, [isAdminLoggedIn]);
+
+  // Debounced auto-save of draft changes to backend + localStorage
+  useEffect(() => {
+    if (!isAdminLoggedIn) return;
+
+    localStorage.setItem('nienburger_nachtwaechter_blocked_dates_draft', JSON.stringify(blockedDates));
+    localStorage.setItem('nienburger_nachtwaechter_public_overrides_draft', JSON.stringify(publicTourOverrides));
+
+    const delayDebounceFn = setTimeout(async () => {
+      try {
+        await fetch('https://friesescholzwebdesign.pages.dev/api/admin/nachtwaechter-config?draft=true', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer nienburg1025'
+          },
+          body: JSON.stringify({
+            config: {
+              blockedDates,
+              publicTourOverrides
+            }
+          })
+        });
+      } catch (e) {
+        console.error('Error auto-saving draft config:', e);
+      }
+    }, 1000);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [blockedDates, publicTourOverrides, isAdminLoggedIn]);
 
   // Contact details state
   const [formData, setFormData] = useState({
