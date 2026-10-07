@@ -472,6 +472,12 @@ export default function App() {
       return publicTourOverrides[dateStr];
     }
 
+    // Von Dezember bis März standardmäßig keine öffentliche Führung (nur frei buchbar)
+    const month = date.getMonth(); // 0 = Jan, 1 = Feb, 2 = Mär, ..., 11 = Dez
+    if (month === 11 || month <= 2) {
+      return false;
+    }
+
     if (date.getDay() !== 5) return false;
     const day = date.getDate();
     return (day >= 1 && day <= 7) || (day >= 15 && day <= 21);
@@ -483,7 +489,7 @@ export default function App() {
     const dates: Date[] = [];
     
     let checkDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < 210; i++) {
       if (!isDayBlocked(checkDate) && isPublicTourDate(checkDate)) {
         dates.push(new Date(checkDate));
         if (dates.length === 2) break;
@@ -502,7 +508,7 @@ export default function App() {
 
   const getPublicTourDescription = (date: Date | null): string => {
     if (!date) {
-      return 'Jeden 1. & 3. Fr. im Monat um 18:00 Uhr. 10€ p.P. (bar vor Ort)';
+      return 'Jeden 1. & 3. Fr. im Monat (April – Nov.) um 18:00 Uhr. 10€ p.P. (bar vor Ort)';
     }
     const isPublic = isPublicTourDate(date);
     if (isPublic) {
@@ -874,7 +880,7 @@ export default function App() {
                                 fontFamily: 'inherit'
                               }}
                             >
-                              Standard (1. & 3. Fr)
+                              Standard (Apr – Nov: 1. & 3. Fr)
                             </button>
                             <button
                               type="button"
@@ -1161,7 +1167,7 @@ export default function App() {
                       <Check size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} /> <span><strong>Historischer Rundgang:</strong> Mit Hellebarde, Horn und Laterne.</span>
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Check size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} /> <span><strong>Öffentliche Führung:</strong> Jeden 1. &amp; 3. Freitag im Monat um 18:00 Uhr (10€ p.P. / Treffpunkt: Lange Str., Höhe Cup&Cino).</span>
+                      <Check size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} /> <span><strong>Öffentliche Führung:</strong> Jeden 1. &amp; 3. Freitag im Monat (April – Nov.) um 18:00 Uhr (10€ p.P. / Treffpunkt: Lange Str., Höhe Cup&Cino).</span>
                     </li>
                     <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <Check size={16} style={{ color: 'var(--accent)', flexShrink: 0 }} /> <span><strong>Spannendes Erlebnis:</strong> Für Vereine, Schulklassen &amp; Privatgruppen.</span>
@@ -1504,7 +1510,7 @@ export default function App() {
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
                   <span style={{ color: 'var(--accent)', fontSize: '1.25rem', fontWeight: 'bold', lineHeight: '1' }}>✦</span>
                   <div className="section-text">
-                    <strong style={{ color: 'var(--text-main)' }}>Einzelpersonen &amp; Kleingruppen (Öffentliche Führung):</strong> Jeden 1. und 3. Freitag im Monat um 18:00 Uhr. Keine Voranmeldung nötig (oder einfach online Plätze sichern). Bezahlung bar vor Ort (10€ p.P.).
+                    <strong style={{ color: 'var(--text-main)' }}>Einzelpersonen &amp; Kleingruppen (Öffentliche Führung):</strong> Jeden 1. und 3. Freitag im Monat (April – Nov.) um 18:00 Uhr. Keine Voranmeldung nötig (oder einfach online Plätze sichern). Bezahlung bar vor Ort (10€ p.P.).
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
@@ -1663,7 +1669,7 @@ export default function App() {
                     <span className="preis-item-val">ca. 1,5 – 2 Std.</span>
                   </li>
                   <li className="preis-item" style={{ borderLeft: '3px solid var(--accent)', paddingLeft: '10px', backgroundColor: 'rgba(217, 162, 74, 0.05)' }}>
-                    <span className="preis-item-title" style={{ fontWeight: 700, color: 'var(--text-main)' }}>Öffentliche Führung (Jeden 1. &amp; 3. Fr., 18 Uhr)</span>
+                    <span className="preis-item-title" style={{ fontWeight: 700, color: 'var(--text-main)' }}>Öffentliche Führung (April – Nov., jeden 1. &amp; 3. Fr., 18 Uhr)</span>
                     <span className="preis-item-val" style={{ fontWeight: 700, color: 'var(--accent)' }}>10,00 € p.P.</span>
                   </li>
                   <li className="preis-item">
