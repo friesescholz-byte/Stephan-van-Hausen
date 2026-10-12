@@ -22,8 +22,23 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { defaultDatesBackup } from './defaultDatesBackup.ts';
+
 // Turnstile Sitekey (generated via helper script)
 const TURNSTILE_SITEKEY = "0x4AAAAAADdygD2o4mUbp1Pu";
+
+// Smart API Helper: First tries native local endpoint (/api/...), falls back seamlessly to central backend if needed
+const apiFetch = async (endpoint: string, options?: RequestInit): Promise<Response> => {
+  try {
+    const res = await fetch(endpoint, options);
+    if (res.status !== 404 && res.status !== 502) {
+      return res;
+    }
+  } catch (e) {
+    // local fetch failed, proceed to fallback
+  }
+  return await fetch(`https://friesescholzwebdesign.pages.dev${endpoint}`, options);
+};
 
 // Animation settings matching Scholz & Friese rules
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -166,7 +181,7 @@ export default function App() {
 
         // Fetch draft from backend
         try {
-          const res = await fetch('https://friesescholzwebdesign.pages.dev/api/admin/nachtwaechter-config?draft=true', {
+          const res = await apiFetch('/api/admin/nachtwaechter-config?draft=true', {
             headers: {
               'Authorization': 'Bearer nienburg1025'
             }
@@ -190,7 +205,7 @@ export default function App() {
       } else {
         // Client mode: fetch published config
         try {
-          const res = await fetch('https://friesescholzwebdesign.pages.dev/api/public-config');
+          const res = await apiFetch('/api/public-config');
           if (res.ok) {
             const data = await res.json();
             if (data) {
@@ -201,9 +216,13 @@ export default function App() {
                 setPublicTourOverrides(data.publicTourOverrides);
               }
             }
+          } else {
+            // Sicherer Fallback auf gespeicherte Termine
+            setBlockedDates(prev => prev.length ? prev : defaultDatesBackup.blockedDates);
           }
         } catch (e) {
-          console.error('Error fetching public config:', e);
+          console.error('Error fetching public config, using default dates backup:', e);
+          setBlockedDates(prev => prev.length ? prev : defaultDatesBackup.blockedDates);
         }
       }
     };
@@ -220,7 +239,7 @@ export default function App() {
 
     const delayDebounceFn = setTimeout(async () => {
       try {
-        await fetch('https://friesescholzwebdesign.pages.dev/api/admin/nachtwaechter-config?draft=true', {
+        await apiFetch('/api/admin/nachtwaechter-config?draft=true', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -372,7 +391,7 @@ export default function App() {
     };
 
     try {
-      const response = await fetch('https://friesescholzwebdesign.pages.dev/api/send-email', {
+      const response = await apiFetch('/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -576,7 +595,7 @@ export default function App() {
     setIsSaving(true);
     setSaveMessage("");
     try {
-      const response = await fetch('https://friesescholzwebdesign.pages.dev/api/admin/nachtwaechter-config', {
+      const response = await apiFetch('/api/admin/nachtwaechter-config', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
