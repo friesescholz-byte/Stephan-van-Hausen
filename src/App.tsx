@@ -27,16 +27,8 @@ import { defaultDatesBackup } from './defaultDatesBackup.ts';
 // Turnstile Sitekey (generated via helper script)
 const TURNSTILE_SITEKEY = "0x4AAAAAADdygD2o4mUbp1Pu";
 
-// Smart API Helper: First tries native local endpoint (/api/...), falls back seamlessly to central backend if needed
+// Central API Backend Helper
 const apiFetch = async (endpoint: string, options?: RequestInit): Promise<Response> => {
-  try {
-    const res = await fetch(endpoint, options);
-    if (res.status !== 404 && res.status !== 502) {
-      return res;
-    }
-  } catch (e) {
-    // local fetch failed, proceed to fallback
-  }
   return await fetch(`https://friesescholzwebdesign.pages.dev${endpoint}`, options);
 };
 
