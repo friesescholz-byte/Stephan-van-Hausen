@@ -173,7 +173,7 @@ export default function App() {
 
         // Fetch draft from backend
         try {
-          const res = await apiFetch('/api/admin/nachtwaechter-config?draft=true', {
+          const res = await apiFetch(`/api/admin/nachtwaechter-config?draft=true&t=${Date.now()}`, {
             headers: {
               'Authorization': 'Bearer nienburg1025'
             }
@@ -197,7 +197,7 @@ export default function App() {
       } else {
         // Client mode: fetch published config
         try {
-          const res = await apiFetch('/api/public-config');
+          const res = await apiFetch(`/api/public-config?t=${Date.now()}`);
           if (res.ok) {
             const data = await res.json();
             if (data) {
@@ -1793,12 +1793,18 @@ export default function App() {
                                   currentCalendarMonth.getMonth(),
                                   dayObj.dayNumber
                                 )) : false;
+                                const isBlockedDay = dayObj.dayNumber ? isDayBlocked(new Date(
+                                  currentCalendarMonth.getFullYear(),
+                                  currentCalendarMonth.getMonth(),
+                                  dayObj.dayNumber
+                                )) : false;
                                 
                                 return (
                                   <div 
                                     key={index} 
-                                    className={`calendar-day ${dayObj.dayNumber === null ? 'empty' : ''} ${isSel ? 'selected' : ''} ${isDis && dayObj.dayNumber !== null ? 'disabled' : ''} ${isPublicFriday && dayObj.dayNumber !== null ? 'public-tour-day' : ''}`}
+                                    className={`calendar-day ${dayObj.dayNumber === null ? 'empty' : ''} ${isSel ? 'selected' : ''} ${isDis && dayObj.dayNumber !== null ? 'disabled' : ''} ${isBlockedDay && dayObj.dayNumber !== null ? 'blocked-day' : ''} ${isPublicFriday && dayObj.dayNumber !== null && !isBlockedDay ? 'public-tour-day' : ''}`}
                                     onClick={() => handleDayClick(dayObj.dayNumber)}
+                                    title={isBlockedDay ? 'Dieser Termin ist leider belegt / nicht buchbar' : undefined}
                                   >
                                     {dayObj.dayNumber}
                                   </div>
@@ -1815,6 +1821,10 @@ export default function App() {
                               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                 <span style={{ display: 'inline-block', width: '12px', height: '12px', border: '1px solid rgba(16, 185, 129, 0.5)', backgroundColor: 'rgba(16, 185, 129, 0.15)', borderRadius: '3px' }}></span>
                                 <span>Öffentliche Führung (10€)</span>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span style={{ display: 'inline-block', width: '12px', height: '12px', border: '1px solid rgba(239, 68, 68, 0.4)', backgroundColor: 'rgba(239, 68, 68, 0.15)', borderRadius: '3px' }}></span>
+                                <span>Belegt / Gesperrt</span>
                               </div>
                             </div>
 

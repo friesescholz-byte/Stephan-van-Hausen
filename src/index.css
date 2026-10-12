@@ -1080,6 +1080,15 @@ section {
   cursor: not-allowed;
 }
 
+.calendar-day.blocked-day {
+  color: #f87171 !important;
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  text-decoration: line-through;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
 .calendar-day.selected {
   background-color: var(--accent) !important;
   color: var(--bg-dark) !important;
