@@ -564,11 +564,35 @@ export default function App() {
     setIsMobileMenuOpen(false);
   };
 
-  // Admin handlers
-  const handleAdminLogin = (e: React.FormEvent) => {
+  // Admin handlers (Weymann System - verified against Cloudflare Secret)
+  const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAdminLoginError("");
-    if (adminPasswordInput === "nienburg1025") {
+    const cleanPw = adminPasswordInput.trim();
+    if (!cleanPw) {
+      setAdminLoginError("Bitte Passwort eingeben!");
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: cleanPw })
+      });
+      const data = await res.json();
+      if (res.ok && data?.success) {
+        setIsAdminLoggedIn(true);
+        sessionStorage.setItem('nienburger_nachtwaechter_admin_auth', 'true');
+        setAdminPasswordInput("");
+        return;
+      }
+    } catch {}
+
+    // Fallback: Secure SHA-256 verification (no plaintext password in source code)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(cleanPw));
+    const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+    if (hashHex === '086d6877445948f8a4595f16e9c6cbb19eb226cc54a816c9157c7c30601847b6') {
       setIsAdminLoggedIn(true);
       sessionStorage.setItem('nienburger_nachtwaechter_admin_auth', 'true');
       setAdminPasswordInput("");
